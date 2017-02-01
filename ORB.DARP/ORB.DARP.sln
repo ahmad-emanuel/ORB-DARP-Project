@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ORB.DARP", "ORB.DARP\ORB.DARP.csproj", "{68A54AEE-BFB2-4E38-B167-344999B04DDA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68A54AEE-BFB2-4E38-B167-344999B04DDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68A54AEE-BFB2-4E38-B167-344999B04DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68A54AEE-BFB2-4E38-B167-344999B04DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68A54AEE-BFB2-4E38-B167-344999B04DDA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

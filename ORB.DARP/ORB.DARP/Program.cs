@@ -8,16 +8,23 @@ class Test
 
     public static void Main()
     {
-        string path = @"F:\Z Studiumsablauf Z\5. Semester\OR2\Project\instances\gen_8_2_75_8_10_1.darp";
+        string path = @"D:\Universitaet\OperationsResearchB\darp_insts\instances\example.txt";
 
         Instance inst1 = new Instance(path);
         inst1.Initialization();
+
+        FeasibilityCheck feasibilityChecker = new FeasibilityCheck(inst1);
+        int[] testroute = new int[] { 3, 4, 9, 2, 8, 7};
 
         Console.WriteLine(inst1.Customers + "\n" + inst1.MaxTime + "\n" + inst1.Vehicles);
         Console.WriteLine();
         ShowArray(inst1.TransitTimes);
         Console.WriteLine("\n\n");
         ShowArray(inst1.TransitCosts);
+        Console.WriteLine("\n\n");
+
+        Console.WriteLine("Number of time window violations: " + feasibilityChecker.checkTimeWindow(testroute));
+        Console.WriteLine("Number of capacity violations: " + feasibilityChecker.checkCapacity(testroute, inst1.VehicleCapacity[1]));
         Console.WriteLine("\nPress any key to exit");
         Console.ReadKey();
     }

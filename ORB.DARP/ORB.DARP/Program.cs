@@ -3,12 +3,12 @@ using System;
 using System.IO;
 using System.Linq;
 
-class Test
+class Programm
 {
 
     public static void Main()
     {
-        string path = @"D:\Universitaet\OperationsResearchB\darp_insts\instances\example.txt";
+        string path = @"C:\Users\Alexander\Dropbox\Uni\WS16-17\Operations Research B\Projekt\instances\test.darp";
 
         Instance inst1 = new Instance(path);
         inst1.Initialization();
@@ -23,8 +23,8 @@ class Test
         ShowArray(inst1.TransitCosts);
         Console.WriteLine("\n\n");
 
-        Console.WriteLine("Number of time window violations: " + feasibilityChecker.checkTimeWindow(testroute));
-        Console.WriteLine("Number of capacity violations: " + feasibilityChecker.checkCapacity(testroute, inst1.VehicleCapacity[1]));
+        Console.WriteLine("Number of time window violations: " + feasibilityChecker.CheckTimeWindows(testroute));
+        Console.WriteLine("Number of capacity violations: " + feasibilityChecker.CheckCapacity(testroute, inst1.VehicleCapacities[1]));
         Console.WriteLine("\nPress any key to exit");
         Console.ReadKey();
     }

@@ -16,11 +16,11 @@ namespace ORB.DARP
         public int Customers { get; private set; }
         public int MaxTime { get; private set; }
         public int Vehicles { get; private set; }
-        public int[] VehicleCapacity { get; private set; }
+        public int[] VehicleCapacities { get; private set; }
         public int[,] TransitTimes { get; private set; }
         public int[,] TransitCosts { get; private set; }
-        public int[,] TimeWindow { get; private set; }
-        public int[,] preferences { get; private set; }
+        public int[,] TimeWindows { get; private set; }
+        public int[,] Preferences { get; private set; }
 
         public Instance(string path)
         {
@@ -37,10 +37,10 @@ namespace ORB.DARP
             MaxTime = Int32.Parse(temp[1][1]);
             Vehicles = Int32.Parse(temp[2][1]);
 
-            VehicleCapacity = new int[Vehicles];
+            VehicleCapacities = new int[Vehicles];
             for (int i = 1; i < temp[3].Length; i++)
             {
-                VehicleCapacity[i - 1] = Int32.Parse(temp[3][i]);
+                VehicleCapacities[i - 1] = Int32.Parse(temp[3][i]);
             }
 
             TransitTimes = new int[2 * Customers + 1, 2 * Customers + 1];
@@ -61,18 +61,18 @@ namespace ORB.DARP
                         TransitCosts[i - (2 * Customers + 6), j] = Int32.Parse(temp[i][j - i + (2 * Customers + 5)]);
                 }
 
-            TimeWindow = new int[2, 2 * Customers];
+            TimeWindows = new int[2, 2 * Customers];
             for (int i = 7 + (4 * Customers); i <= (4 * Customers) + 8; i++)
                 for (int j = 0; j < temp[i].Length; j++)
                 {
-                    TimeWindow[i - (7 + 4 * Customers), j] = Int32.Parse(temp[i][j]);
+                    TimeWindows[i - (7 + 4 * Customers), j] = Int32.Parse(temp[i][j]);
                 }
 
-            preferences = new int[Vehicles, Customers];
+            Preferences = new int[Vehicles, Customers];
             for (int i = 10 + (4 * Customers); i <= (4 * Customers) + 9 + Vehicles; i++)
                 for (int j = 0; j < temp[i].Length; j++)
                 {
-                    preferences[i - (10 + 4 * Customers), j] = Int32.Parse(temp[i][j]);
+                    Preferences[i - (10 + 4 * Customers), j] = Int32.Parse(temp[i][j]);
                 }
         }
 

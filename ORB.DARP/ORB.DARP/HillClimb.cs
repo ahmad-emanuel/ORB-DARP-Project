@@ -24,8 +24,12 @@ namespace ORB.DARP
 
         public List<int> Improve(int[] route, int vehicle)
         {
-            for (int count = 0; count < 10; count++) // TODO Better!!
+            var improvements = 0;
+
+            do
             {
+                improvements = 0;
+
                 for (int i = 0; i < route.Length; i++)
                 {
                     for (int j = i + 1; j < route.Length; j++)
@@ -40,16 +44,20 @@ namespace ORB.DARP
 
                             var costNewRoute = GetObjective(route, vehicle);
 
-                            if (costNewRoute - costOldRoute > 0)
+                            if (costNewRoute - costOldRoute >= 0)
                             {
                                 temp = route[i];
                                 route[i] = route[j];
                                 route[j] = temp;
                             }
+                            else
+                            {
+                                improvements++;
+                            }
                         }
                     }
                 }
-            }
+            } while (improvements != 0);
 
             return route.ToList();
         }

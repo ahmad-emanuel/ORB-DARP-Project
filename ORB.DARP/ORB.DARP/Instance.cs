@@ -19,23 +19,25 @@ namespace ORB.DARP
 
         public Instance(string path)
         {
-            this.Path = path;
+            Path = path;
+
+            Initialization();
         }
 
-        public void Initialization()
+        private void Initialization()
         {
             var temp = File.ReadLines(Path)
                 .Select(line => line.Split(' '))
                 .ToArray();
 
-            Customers = Int32.Parse(temp[0][1]);
-            MaxTime = Int32.Parse(temp[1][1]);
-            Vehicles = Int32.Parse(temp[2][1]);
+            Customers = int.Parse(temp[0][1]);
+            MaxTime = int.Parse(temp[1][1]);
+            Vehicles = int.Parse(temp[2][1]);
 
             VehicleCapacities = new int[Vehicles];
             for (int i = 1; i < temp[3].Length; i++)
             {
-                VehicleCapacities[i - 1] = Int32.Parse(temp[3][i]);
+                VehicleCapacities[i - 1] = int.Parse(temp[3][i]);
             }
 
             TransitTimes = new int[2 * Customers + 1, 2 * Customers + 1];
@@ -44,7 +46,7 @@ namespace ORB.DARP
                 for (int j = 0; j < (i-5); j++)
                     TransitTimes[i - 5, j] = TransitTimes[j,i-5];
                 for (int j = (i-4); j < 2*Customers+1; j++)
-                    TransitTimes[i - 5, j] = Int32.Parse(temp[i][j-i+4]);
+                    TransitTimes[i - 5, j] = int.Parse(temp[i][j-i+4]);
             }
 
             TransitCosts = new int[2 * Customers + 1, 2 * Customers + 1];
@@ -53,21 +55,21 @@ namespace ORB.DARP
                     for (int j = 0; j < i - (2 * Customers + 6); j++)
                         TransitCosts[i - (2 * Customers + 6), j] = TransitCosts[j, i - (2 * Customers + 6)];
                     for (int j = (i - (2 * Customers + 5)); j < 2 * Customers + 1; j++)
-                        TransitCosts[i - (2 * Customers + 6), j] = Int32.Parse(temp[i][j - i + (2 * Customers + 5)]);
+                        TransitCosts[i - (2 * Customers + 6), j] = int.Parse(temp[i][j - i + (2 * Customers + 5)]);
                 }
 
             TimeWindows = new int[2, 2 * Customers];
             for (int i = 7 + (4 * Customers); i <= (4 * Customers) + 8; i++)
                 for (int j = 0; j < temp[i].Length; j++)
                 {
-                    TimeWindows[i - (7 + 4 * Customers), j] = Int32.Parse(temp[i][j]);
+                    TimeWindows[i - (7 + 4 * Customers), j] = int.Parse(temp[i][j]);
                 }
 
             Preferences = new int[Vehicles, Customers];
             for (int i = 10 + (4 * Customers); i <= (4 * Customers) + 9 + Vehicles; i++)
                 for (int j = 0; j < temp[i].Length; j++)
                 {
-                    Preferences[i - (10 + 4 * Customers), j] = Int32.Parse(temp[i][j]);
+                    Preferences[i - (10 + 4 * Customers), j] = int.Parse(temp[i][j]);
                 }
         }
     }

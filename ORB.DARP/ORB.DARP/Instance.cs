@@ -1,16 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ORB.DARP
 {
     public class Instance
     {
-
         private string Path;
 
         public int Customers { get; private set; }
@@ -75,7 +70,5 @@ namespace ORB.DARP
                     Preferences[i - (10 + 4 * Customers), j] = Int32.Parse(temp[i][j]);
                 }
         }
-
-
     }
 }

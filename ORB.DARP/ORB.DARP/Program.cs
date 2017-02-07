@@ -1,41 +1,42 @@
 ﻿using ORB.DARP;
 using System;
-using System.IO;
-using System.Linq;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 class Programm
 {
-
     public static void Main()
     {
-        string path = @"D:\Universitaet\OperationsResearchB\darp_insts\instances\example.txt";
+        string path = @"C:\Users\Alexander\Dropbox\Uni\WS16-17\Operations Research B\Projekt\instances\test.darp";
 
         Instance inst1 = new Instance(path);
         inst1.Initialization();
 
-        FeasibilityCheck feasibilityChecker = new FeasibilityCheck(inst1);
-        int[] testroute = new int[] { 3, 4, 9, 2, 8, 7};
+        SequentialConstruction sc = new SequentialConstruction(inst1, 0.1, 0.7, 0.2);
 
-        Console.WriteLine(inst1.Customers + "\n" + inst1.MaxTime + "\n" + inst1.Vehicles);
-        Console.WriteLine();
-        ShowArray(inst1.TransitTimes);
-        Console.WriteLine("\n\n");
-        ShowArray(inst1.TransitCosts);
-        Console.WriteLine("\n\n");
+        var stopWatch = Stopwatch.StartNew();
+        var solution = sc.Construct();
+        stopWatch.Stop();
+        Print(solution, stopWatch.ElapsedMilliseconds/1000);
 
-        Console.WriteLine("Number of time window violations: " + feasibilityChecker.CheckTimeWindows(testroute));
-        Console.WriteLine("Number of capacity violations: " + feasibilityChecker.CheckCapacity(testroute, inst1.VehicleCapacities[1]));
-        Console.WriteLine("\nPress any key to exit");
+        Console.WriteLine("\nPress any Key to exit!");
         Console.ReadKey();
     }
 
-    public static void ShowArray(int[,] array)
+    public static void Print(List<int[]> solution, long time)
     {
-        for (int i = 0; i < array.GetLength(0); i++)
+        Console.WriteLine("###RESULT: Feasible.");
+        Console.Write("###COST: --");
+
+        for (int i = 1; i <= solution.Count; i++)
         {
-            Console.WriteLine();
-            for (int j = 0; j < array.GetLength(1); j++)
-                Console.Write(array[i,j] +",");
+            Console.Write("\n###VEHICLE {0}: ", i);
+            foreach (var node in solution[i-1])
+            {
+                Console.Write("{0} ", node);
+            }
         }
+
+        Console.WriteLine("\n###CPU-TIME: {0}", time);
     }
 }

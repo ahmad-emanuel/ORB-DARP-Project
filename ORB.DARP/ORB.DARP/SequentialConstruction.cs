@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ORB.DARP
 {
     class SequentialConstruction
     {
         private Instance Instance;
-
-        private HillClimb HillClimber;
+        private HillClimb Climber;
+        private FeasibilityCheck Checker;
 
         private Queue<int> CustomersLeft;
 
-        public SequentialConstruction(Instance instance)
+        public SequentialConstruction(Instance instance, double w1, double w2, double w3)
         {
             Instance = instance;
-            HillClimber = new HillClimb(Instance);
+            Checker = new FeasibilityCheck(Instance);
+            Climber = new HillClimb(Instance, Checker, w1, w2, w3);
             CustomersLeft = new Queue<int>(Instance.Customers);
 
             for (int i = 1; i <= Instance.Customers; i++)
@@ -27,34 +23,38 @@ namespace ORB.DARP
             }
         }
 
-        public ArrayList Construct()
+        public List<int[]> Construct()
         {
-            var solution = new ArrayList(Instance.Vehicles);
+            var solution = new List<int[]>(Instance.Vehicles);
 
-            while (CustomersLeft.Count > 0)
+            while (CustomersLeft.Count > 0 && solution.Count != Instance.Vehicles)
             {
                 var route = new List<int>();
-                var tempCustomersLeft = CustomersLeft.ToArray();
 
-                for (int i = 0; i < tempCustomersLeft.Length; i++)
+                for (int i = 0; i < CustomersLeft.Count; i++)
                 {
-                    CustomersLeft.Dequeue();
+                    var customer = CustomersLeft.Dequeue(); // TODO Get random new customer??
 
-                    route.Add(tempCustomersLeft[i]);
-                    route.Add(tempCustomersLeft[i]);
+                    route.Add(customer);
+                    route.Add(customer);
 
-                    route = HillClimber.Improve(route.ToArray());
+                    route = Climber.Improve(route.ToArray(), solution.Count);
+                    Checker.CheckRoute(Climber.DecodeRoute(route.ToArray()), solution.Count);
 
-                    if (route.Count/2 > 2) // TODO Real feasible check
+                    if (Checker.IsFeasibleRoute())
                     {
-                        CustomersLeft.Enqueue(tempCustomersLeft[i]);
+                        i = -1;
+                    }
+                    else
+                    {
+                        CustomersLeft.Enqueue(customer);
 
-                        route.Remove(tempCustomersLeft[i]);
-                        route.Remove(tempCustomersLeft[i]);
+                        route.Remove(customer);
+                        route.Remove(customer);
                     }
                 }
 
-                solution.Add(route);
+                solution.Add(Climber.DecodeRoute(route.ToArray()));
             }
 
             return solution;

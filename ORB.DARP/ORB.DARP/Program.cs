@@ -8,7 +8,7 @@ class Programm
 
     public static void Main()
     {
-        string path = @"C:\Users\Alexander\Dropbox\Uni\WS16-17\Operations Research B\Projekt\instances\test.darp";
+        string path = @"D:\Universitaet\OperationsResearchB\darp_insts\instances\example.txt";
 
         Instance inst1 = new Instance(path);
         inst1.Initialization();

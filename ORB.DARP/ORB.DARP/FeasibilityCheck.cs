@@ -38,6 +38,12 @@ namespace ORB.DARP
                 }
             }
 
+
+            if (helpRoute[route.Length - 1] + Instance.TransitTimes[route[route.Length - 1], 0]  > Instance.MaxTime)
+            {
+                violations++;
+            }
+
             return violations;
         }
 

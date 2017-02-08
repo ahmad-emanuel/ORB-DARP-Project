@@ -9,7 +9,6 @@ namespace ORB.DARP
         private HillClimb Climber;
         private FeasibilityCheck Checker;
 
-
         private List<int> CustomersLeft;
 
         public SequentialConstruction(Instance instance, double w1, double w2, double w3)
@@ -18,7 +17,6 @@ namespace ORB.DARP
             Checker = new FeasibilityCheck(Instance);
             Climber = new HillClimb(Instance, Checker, w1, w2, w3);
             CustomersLeft = new List<int>(Instance.Customers);
-            var rnd = new Random();
 
             for (int i = 1; i <= Instance.Customers; i++)
             {
@@ -34,14 +32,12 @@ namespace ORB.DARP
             while (CustomersLeft.Count > 0 && solution.Count != Instance.Vehicles)
             {
                 var route = new List<int>();
-                int customer;
 
                 for (int i = 0; i < CustomersLeft.Count; i++)
                 {
        
-                    customer = CustomersLeft[random.Next(0, CustomersLeft.Count -1)]; // Gets a random customer
+                    var customer = CustomersLeft[random.Next(0, CustomersLeft.Count-1)]; // Gets a random customer
                     CustomersLeft.Remove(customer);
-
 
                     route.Add(customer);
                     route.Add(customer);

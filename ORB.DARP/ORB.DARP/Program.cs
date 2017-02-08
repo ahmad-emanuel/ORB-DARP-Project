@@ -7,7 +7,7 @@ class Programm
 {
     public static void Main()
     {
-        string path = @"D:\Universitaet\OperationsResearchB\darp_insts\instances\gen_500_50_100_10_20_2.darp";
+        string path = @"C:\Users\Alexander\Dropbox\Uni\WS16-17\Operations Research B\Projekt\instances\test.darp";
 
         Instance inst = new Instance(path);
         SequentialConstruction sc = new SequentialConstruction(inst, 0.01, 0.8, 0.19);

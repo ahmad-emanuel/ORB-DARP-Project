@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace ORB.DARP
 {
@@ -8,32 +9,39 @@ namespace ORB.DARP
         private HillClimb Climber;
         private FeasibilityCheck Checker;
 
-        private Queue<int> CustomersLeft;
+
+        private List<int> CustomersLeft;
 
         public SequentialConstruction(Instance instance, double w1, double w2, double w3)
         {
             Instance = instance;
             Checker = new FeasibilityCheck(Instance);
             Climber = new HillClimb(Instance, Checker, w1, w2, w3);
-            CustomersLeft = new Queue<int>(Instance.Customers);
+            CustomersLeft = new List<int>(Instance.Customers);
+            var rnd = new Random();
 
             for (int i = 1; i <= Instance.Customers; i++)
             {
-                CustomersLeft.Enqueue(i);
+                CustomersLeft.Add(i);
             }
         }
 
         public List<int[]> Construct()
         {
             var solution = new List<int[]>(Instance.Vehicles);
+            var random = new Random();
 
             while (CustomersLeft.Count > 0 && solution.Count != Instance.Vehicles)
             {
                 var route = new List<int>();
+                int customer;
 
                 for (int i = 0; i < CustomersLeft.Count; i++)
                 {
-                    var customer = CustomersLeft.Dequeue(); // TODO Get random new customer??
+       
+                    customer = CustomersLeft[random.Next(0, CustomersLeft.Count -1)]; // Gets a random customer
+                    CustomersLeft.Remove(customer);
+
 
                     route.Add(customer);
                     route.Add(customer);
@@ -47,7 +55,7 @@ namespace ORB.DARP
                     }
                     else
                     {
-                        CustomersLeft.Enqueue(customer);
+                        CustomersLeft.Add(customer);
 
                         route.Remove(customer);
                         route.Remove(customer);

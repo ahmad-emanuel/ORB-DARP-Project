@@ -32,6 +32,7 @@ namespace ORB.DARP
                 if (helpRoute[i] > Instance.TimeWindows[1, route[i]-1] || helpRoute[i] > Instance.MaxTime)
                 {
                     TotalTimeWindowsViolations++;
+
                 }
             }
 

@@ -35,8 +35,7 @@ namespace ORB.DARP
 
                 for (int i = 0; i < CustomersLeft.Count; i++)
                 {
-       
-                    var customer = CustomersLeft[random.Next(0, CustomersLeft.Count-1)]; // Gets a random customer
+                    var customer = CustomersLeft[random.Next(0, CustomersLeft.Count-1)];
                     CustomersLeft.Remove(customer);
 
                     route.Add(customer);

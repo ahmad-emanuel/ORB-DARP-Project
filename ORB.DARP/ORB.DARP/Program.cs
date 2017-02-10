@@ -5,40 +5,84 @@ using System.Diagnostics;
 
 class Programm
 {
-    public static void Main()
+    private static Instance instance;
+    private static SequentialConstruction sequentialConstruction;
+
+    private static List<int[]> solution = new List<int[]>();
+
+    public static void Main(string[] args)
     {
-        string path = @"C:\Users\Alexander\Dropbox\Uni\WS16-17\Operations Research B\Projekt\instances\test.darp";
+        if (args.Length == 0)
+        {
+            Console.WriteLine("No agruments passed!\n");
+            Console.WriteLine("Usage: orbdar [maximum time] instance\n");
+            Console.WriteLine("maximum time (optional): maximum execution time in seconds");
+            Console.WriteLine("instance: full path to the input instance file");
+        }
+        else if (args.Length == 1)
+        {
+            instance = new Instance(args[0]);
+        }
+        else if (args.Length == 2)
+        {
+            var maxCpuTime = 0;
+            int.TryParse(args[0], out maxCpuTime);
 
-        Instance inst = new Instance(path);
-        SequentialConstruction sc = new SequentialConstruction(inst, 0.01, 0.8, 0.19);
+            instance = new Instance(args[1]);
+        }
 
-        var stopWatch = Stopwatch.StartNew();
-        var solution = sc.Construct();
-        stopWatch.Stop();
-        Print(inst, solution, stopWatch.ElapsedMilliseconds/1000);
+        if (args.Length != 0)
+        {
+            var stopWatch = Stopwatch.StartNew();
 
-        Console.WriteLine("\nPress any Key to exit!");
+            CreateInitialSolution(1000);
+
+            stopWatch.Stop();
+
+            Print(stopWatch.ElapsedMilliseconds / 1000);
+        }
+        
+        Console.WriteLine("\nPress any key to exit!");
         Console.ReadKey();
     }
 
-    public static void Print(Instance instance, List<int[]> solution, long time)
+    private static void CreateInitialSolution(int iterations)
     {
-        Console.WriteLine("###RESULT: Feasible.");
-        Console.Write("###COST: {0}", GetObjective(instance, solution));
-
-        for (int i = 1; i <= solution.Count; i++)
+        while (iterations > 0 && !FeasibilityCheck.IsFeasibleSolution(instance, solution))
         {
-            Console.Write("\n###VEHICLE {0}: ", i);
-            foreach (var node in solution[i-1])
-            {
-                Console.Write("{0} ", node);
-            }
-        }
+            sequentialConstruction = new SequentialConstruction(instance, 0.01, 0.80, 0.19);
+            solution = sequentialConstruction.Construct();
 
-        Console.WriteLine("\n###CPU-TIME: {0}", time);
+            iterations--;
+        }
     }
 
-    public static int GetObjective(Instance instance, List<int[]> solution)
+    private static void Print(long cpuTime)
+    {
+        if (FeasibilityCheck.IsFeasibleSolution(instance, solution))
+        {
+            Console.WriteLine("###RESULT: Feasible.");
+            Console.Write("###COST: {0}", GetObjective());
+
+            for (int i = 1; i <= solution.Count; i++)
+            {
+                Console.Write("\n###VEHICLE {0}: ", i);
+                foreach (var node in solution[i - 1])
+                {
+                    Console.Write("{0} ", node);
+                }
+            }
+
+            Console.WriteLine("\n###CPU-TIME: {0}", cpuTime);
+        }
+        else
+        {
+            Console.WriteLine("###RESULT: Infeasible.");
+        }
+        
+    }
+
+    private static int GetObjective()
     {
         var costs = 0;
         var vehicle = 0;

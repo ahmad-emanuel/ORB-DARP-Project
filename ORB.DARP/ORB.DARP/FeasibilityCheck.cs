@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ORB.DARP
 {
@@ -75,6 +76,25 @@ namespace ORB.DARP
         public bool IsFeasibleRoute()
         {
             if (TotalTimeWindowsViolations == 0 && TotalCapacitiesViolations == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool IsFeasibleSolution(Instance instance, List<int[]> solution)
+        {
+            var customerCount = 0;
+
+            foreach (var route in solution)
+            {
+                customerCount += route.Length/2;
+            }
+
+            if (customerCount == instance.Customers)
             {
                 return true;
             }

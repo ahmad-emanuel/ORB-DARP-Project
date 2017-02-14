@@ -32,7 +32,7 @@ public class Programm
 
             stopWatch.Stop();
 
-            Print(true, stopWatch.ElapsedMilliseconds / 1000);
+            Output(true, stopWatch.ElapsedMilliseconds / 1000);
         }
         else if (args.Length == 2)
         {
@@ -46,7 +46,7 @@ public class Programm
 
             stopWatch.Stop();
 
-            Print(noTimeout, stopWatch.ElapsedMilliseconds / 1000);
+            Output(noTimeout, stopWatch.ElapsedMilliseconds / 1000);
         }
         
         Console.WriteLine("\nPress any key to exit!");
@@ -64,7 +64,7 @@ public class Programm
         }
     }
 
-    private static void Print(bool noTimeout, long cpuTime)
+    private static void Output(bool noTimeout, long cpuTime)
     {
         if (FeasibilityCheck.IsFeasibleSolution(instance, solution))
         {
@@ -105,7 +105,7 @@ public class Programm
         
     }
 
-    private static int GetObjective()
+    public static int GetObjective()
     {
         var costs = 0;
         var vehicle = 0;

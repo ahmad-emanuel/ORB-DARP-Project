@@ -85,13 +85,13 @@ namespace ORB.DARP
             }
         }
 
-        public static bool IsFeasibleSolution(Instance instance, List<int[]> solution)
+        public static bool IsFeasibleSolution(Instance instance, List<List<int>> solution)
         {
             var customerCount = 0;
 
             foreach (var route in solution)
             {
-                customerCount += route.Length/2;
+                customerCount += route.Count/2;
             }
 
             if (customerCount == instance.Customers)

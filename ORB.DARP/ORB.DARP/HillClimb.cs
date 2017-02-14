@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace ORB.DARP
 {
-    class HillClimb
+    public class HillClimb
     {
-        private Instance Instance;
+        private static Instance Instance;
         private FeasibilityCheck Checker;
 
         private double w1;
@@ -62,7 +62,7 @@ namespace ORB.DARP
             return route.ToList();
         }
 
-        private int Decode(int[] route, int customer, int index)
+        private static int Decode(int[] route, int customer, int index)
         {
             var i = 0;
             var counter = -1;
@@ -80,7 +80,7 @@ namespace ORB.DARP
             return counter * Instance.Customers + customer;
         }
 
-        public int[] DecodeRoute(int[] route)
+        public static int[] DecodeRoute(int[] route)
         {
             var decoded = new int[route.Length];
 
@@ -90,6 +90,20 @@ namespace ORB.DARP
             }
 
             return decoded;
+        }
+
+        public static List<List<int>> DecodeSolution(List<List<int>> solution)
+        {
+            for (int i = 0; i < solution.Count; i++)
+            {
+                for (int j = 0; j < solution[i].Count; j++)
+                {
+                    solution[i][j] = Decode(solution[i].ToArray(), solution[i][j], j);
+                }
+                    
+            }
+
+            return solution;
         }
 
         private double GetObjective(int[] route, int vehicle)

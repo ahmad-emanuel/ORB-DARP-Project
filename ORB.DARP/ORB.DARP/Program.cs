@@ -2,13 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 
-class Programm
+public class Programm
 {
     private static Instance instance;
     private static SequentialConstruction sequentialConstruction;
 
-    private static List<int[]> solution = new List<int[]>();
+    private static List<List<int>> solution = new List<List<int>>();
 
     public static void Main(string[] args)
     {
@@ -22,24 +24,29 @@ class Programm
         else if (args.Length == 1)
         {
             instance = new Instance(args[0]);
-        }
-        else if (args.Length == 2)
-        {
-            var maxCpuTime = 0;
-            int.TryParse(args[0], out maxCpuTime);
 
-            instance = new Instance(args[1]);
-        }
-
-        if (args.Length != 0)
-        {
             var stopWatch = Stopwatch.StartNew();
 
-            CreateInitialSolution(1000);
+            CreateInitialSolution(10000);
+            solution = HillClimb.DecodeSolution(solution);
 
             stopWatch.Stop();
 
-            Print(stopWatch.ElapsedMilliseconds / 1000);
+            Print(true, stopWatch.ElapsedMilliseconds / 1000);
+        }
+        else if (args.Length == 2)
+        {
+            instance = new Instance(args[1]);
+
+            var stopWatch = Stopwatch.StartNew();
+            var task = Task.Factory.StartNew(() => CreateInitialSolution(1000000));
+            var noTimeout = task.Wait(int.Parse(args[0]) * 1000);
+
+            solution = HillClimb.DecodeSolution(solution);
+
+            stopWatch.Stop();
+
+            Print(noTimeout, stopWatch.ElapsedMilliseconds / 1000);
         }
         
         Console.WriteLine("\nPress any key to exit!");
@@ -57,27 +64,43 @@ class Programm
         }
     }
 
-    private static void Print(long cpuTime)
+    private static void Print(bool noTimeout, long cpuTime)
     {
         if (FeasibilityCheck.IsFeasibleSolution(instance, solution))
         {
+            var sol = File.AppendText(instance.OutPath);
+
             Console.WriteLine("###RESULT: Feasible.");
+            sol.WriteLine("###RESULT: Feasible.");
             Console.Write("###COST: {0}", GetObjective());
+            sol.Write("###COST: {0}", GetObjective());
 
             for (int i = 1; i <= solution.Count; i++)
             {
                 Console.Write("\n###VEHICLE {0}: ", i);
+                sol.Write("\n###VEHICLE {0}: ", i);
                 foreach (var node in solution[i - 1])
                 {
                     Console.Write("{0} ", node);
+                    sol.Write("{0} ", node);
                 }
             }
 
             Console.WriteLine("\n###CPU-TIME: {0}", cpuTime);
+            sol.WriteLine("\n###CPU-TIME: {0}", cpuTime);
+
+            sol.Close();
         }
         else
         {
-            Console.WriteLine("###RESULT: Infeasible.");
+            if (noTimeout)
+            {
+                Console.WriteLine("###RESULT: Infeasible.");
+            }
+            else
+            {
+                Console.WriteLine("###RESULT: Timeout.");
+            }
         }
         
     }
@@ -91,7 +114,7 @@ class Programm
         {
             costs += instance.TransitCosts[0, route[0]];
 
-            for (int i = 0; i <= route.Length-2; i++)
+            for (int i = 0; i <= route.Count-2; i++)
             {
                 costs += instance.TransitCosts[route[i], route[i+1]];
 
@@ -101,7 +124,7 @@ class Programm
                 }
             }
 
-            costs += instance.TransitCosts[route[route.Length-1], 0];
+            costs += instance.TransitCosts[route[route.Count-1], 0];
 
             vehicle++;
         }

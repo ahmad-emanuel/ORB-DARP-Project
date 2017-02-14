@@ -49,8 +49,10 @@
     <Compile Include="FeasibilityCheck.cs" />
     <Compile Include="HillClimb.cs" />
     <Compile Include="Instance.cs" />
+    <Compile Include="LNS.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomNumber.cs" />
     <Compile Include="SequentialConstruction.cs" />
   </ItemGroup>
   <ItemGroup>

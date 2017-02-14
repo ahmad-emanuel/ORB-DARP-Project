@@ -3,7 +3,7 @@ using System;
 
 namespace ORB.DARP
 {
-    class SequentialConstruction
+    public class SequentialConstruction
     {
         private Instance Instance;
         private HillClimb Climber;
@@ -24,10 +24,9 @@ namespace ORB.DARP
             }
         }
 
-        public List<int[]> Construct()
+        public List<List<int>> Construct()
         {
-            var solution = new List<int[]>(Instance.Vehicles);
-            var random = new Random();
+            var solution = new List<List<int>>(Instance.Vehicles);
 
             while (CustomersLeft.Count > 0 && solution.Count != Instance.Vehicles)
             {
@@ -35,14 +34,14 @@ namespace ORB.DARP
 
                 for (int i = 0; i < CustomersLeft.Count; i++)
                 {
-                    var customer = CustomersLeft[random.Next(0, CustomersLeft.Count-1)];
+                    var customer = CustomersLeft[RandomNumber.Between(0, CustomersLeft.Count-1)];
                     CustomersLeft.Remove(customer);
 
                     route.Add(customer);
                     route.Add(customer);
 
                     route = Climber.Improve(route.ToArray(), solution.Count);
-                    Checker.CheckRoute(Climber.DecodeRoute(route.ToArray()), solution.Count);
+                    Checker.CheckRoute(HillClimb.DecodeRoute(route.ToArray()), solution.Count);
 
                     if (Checker.IsFeasibleRoute())
                     {
@@ -57,7 +56,7 @@ namespace ORB.DARP
                     }
                 }
 
-                solution.Add(Climber.DecodeRoute(route.ToArray()));
+                solution.Add(route);
             }
 
             return solution;

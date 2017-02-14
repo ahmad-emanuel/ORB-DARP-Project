@@ -91,7 +91,7 @@ class Programm
         {
             costs += instance.TransitCosts[0, route[0]];
 
-            for (int i = 0; i < route.Length-2; i++)
+            for (int i = 0; i <= route.Length-2; i++)
             {
                 costs += instance.TransitCosts[route[i], route[i+1]];
 

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 public class Programm
 {
     private static Instance instance;
+    private static FeasibilityCheck feasibilityCheck;
     private static SequentialConstruction sequentialConstruction;
 
     private static List<List<int>> solution = new List<List<int>>();
@@ -24,11 +25,11 @@ public class Programm
         else if (args.Length == 1)
         {
             instance = new Instance(args[0]);
+            feasibilityCheck = new FeasibilityCheck(instance);
 
             var stopWatch = Stopwatch.StartNew();
 
             CreateInitialSolution(10000);
-            solution = HillClimb.DecodeSolution(solution);
 
             stopWatch.Stop();
 
@@ -37,12 +38,11 @@ public class Programm
         else if (args.Length == 2)
         {
             instance = new Instance(args[1]);
+            feasibilityCheck = new FeasibilityCheck(instance);
 
             var stopWatch = Stopwatch.StartNew();
             var task = Task.Factory.StartNew(() => CreateInitialSolution(1000000));
             var noTimeout = task.Wait(int.Parse(args[0]) * 1000);
-
-            solution = HillClimb.DecodeSolution(solution);
 
             stopWatch.Stop();
 
@@ -55,7 +55,7 @@ public class Programm
 
     private static void CreateInitialSolution(int iterations)
     {
-        while (iterations > 0 && !FeasibilityCheck.IsFeasibleSolution(instance, solution))
+        while (iterations > 0 && !feasibilityCheck.IsFeasibleSolution(instance, solution))
         {
             sequentialConstruction = new SequentialConstruction(instance, 0.01, 0.80, 0.19);
             solution = sequentialConstruction.Construct();
@@ -66,14 +66,16 @@ public class Programm
 
     private static void Output(bool noTimeout, long cpuTime)
     {
-        if (FeasibilityCheck.IsFeasibleSolution(instance, solution))
+        solution = HillClimb.DecodeSolution(solution);
+
+        if (feasibilityCheck.IsFeasibleSolution(instance, solution))
         {
             var sol = File.AppendText(instance.OutPath);
 
             Console.WriteLine("###RESULT: Feasible.");
             sol.WriteLine("###RESULT: Feasible.");
-            Console.Write("###COST: {0}", GetObjective());
-            sol.Write("###COST: {0}", GetObjective());
+            Console.Write("###COST: {0}", GetObjective(solution));
+            sol.Write("###COST: {0}", GetObjective(solution));
 
             for (int i = 1; i <= solution.Count; i++)
             {
@@ -105,7 +107,7 @@ public class Programm
         
     }
 
-    public static int GetObjective()
+    public static int GetObjective(List<List<int>> solution)
     {
         var costs = 0;
         var vehicle = 0;

@@ -67,14 +67,11 @@ namespace ORB.DARP
             }
         }
 
-        public void CheckRoute(int[] route, int vehicle)
+        public bool IsFeasibleRoute(int[] route, int vehicle)
         {
             CheckTimeWindows(route);
             CheckCapacities(route, Instance.VehicleCapacities[vehicle]);
-        }
 
-        public bool IsFeasibleRoute()
-        {
             if (TotalTimeWindowsViolations == 0 && TotalCapacitiesViolations == 0)
             {
                 return true;
@@ -85,13 +82,18 @@ namespace ORB.DARP
             }
         }
 
-        public static bool IsFeasibleSolution(Instance instance, List<List<int>> solution)
+        public bool IsFeasibleSolution(Instance instance, List<List<int>> solution)
         {
             var customerCount = 0;
 
-            foreach (var route in solution)
+            for (int i = 0; i < solution.Count; i++)
             {
-                customerCount += route.Count/2;
+                //if (!IsFeasibleRoute(solution[i].ToArray(), i))
+                //{
+                //    return false;
+                //}
+
+                customerCount += solution[i].Count/2;
             }
 
             if (customerCount == instance.Customers)

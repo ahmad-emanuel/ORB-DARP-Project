@@ -108,7 +108,7 @@ namespace ORB.DARP
 
         private double GetObjective(int[] route, int vehicle)
         {
-            Checker.CheckRoute(DecodeRoute(route), vehicle);
+            Checker.IsFeasibleRoute(DecodeRoute(route), vehicle);
 
             return w1 * Checker.TotalRouteDuration + w2 * Checker.TotalTimeWindowsViolations + w3 * Checker.TotalCapacitiesViolations;
         }

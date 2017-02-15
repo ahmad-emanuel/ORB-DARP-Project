@@ -16,6 +16,7 @@ namespace ORB.DARP
             Instance = instance;
             Checker = new FeasibilityCheck(Instance);
             Climber = new HillClimb(Instance, Checker, w1, w2, w3);
+
             CustomersLeft = new List<int>(Instance.Customers);
 
             for (int i = 1; i <= Instance.Customers; i++)
@@ -41,9 +42,8 @@ namespace ORB.DARP
                     route.Add(customer);
 
                     route = Climber.Improve(route.ToArray(), solution.Count);
-                    Checker.CheckRoute(HillClimb.DecodeRoute(route.ToArray()), solution.Count);
-
-                    if (Checker.IsFeasibleRoute())
+                    
+                    if (Checker.IsFeasibleRoute(HillClimb.DecodeRoute(route.ToArray()), solution.Count))
                     {
                         i = -1;
                     }

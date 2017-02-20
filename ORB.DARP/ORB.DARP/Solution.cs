@@ -45,19 +45,21 @@ namespace ORB.DARP
 
             foreach (var route in Routes)
             {
-                costs += Instance.TransitCosts[0, route.GetCustomers()[0]];
+                var decoded = route.DecodedRouteToArray();
 
-                for (int i = 0; i <= route.GetCustomerCount() - 2; i++)
+                costs += Instance.TransitCosts[0, decoded[0]];
+
+                for (int i = 0; i <= decoded.Length - 2; i++)
                 {
-                    costs += Instance.TransitCosts[route.GetCustomers()[i], route.GetCustomers()[i+1]];
+                    costs += Instance.TransitCosts[decoded[i], decoded[i+1]];
 
-                    if (route.GetCustomers()[i] <= Instance.Customers)
+                    if (decoded[i] <= Instance.Customers)
                     {
-                        costs += Instance.Preferences[vehicle, route.GetCustomers()[i]-1];
+                        costs += Instance.Preferences[vehicle, decoded[i]-1];
                     }
                 }
 
-                costs += Instance.TransitCosts[route.GetCustomers()[route.GetCustomerCount()-1], 0];
+                costs += Instance.TransitCosts[decoded[decoded.Length-1], 0];
 
                 vehicle++;
             }

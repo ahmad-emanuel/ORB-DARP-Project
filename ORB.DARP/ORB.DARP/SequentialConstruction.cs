@@ -16,10 +16,7 @@ namespace ORB.DARP
 
             CustomersLeft = new List<int>(Instance.Customers);
 
-            for (int i = 1; i <= Instance.Customers; i++)
-            {
-                CustomersLeft.Add(i);
-            }
+            Reset();
         }
 
         public void Construct()
@@ -55,6 +52,16 @@ namespace ORB.DARP
             }
 
             Programm.solution = solution;
+        }
+
+        public void Reset()
+        {
+            CustomersLeft.Clear();
+
+            for (int i = 1; i <= Instance.Customers; i++)
+            {
+                CustomersLeft.Add(i);
+            }
         }
     }
 }

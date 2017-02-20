@@ -54,16 +54,18 @@ public class Programm
 
     private static void FindSolution(int iterations)
     {
+        sequentialConstruction = new SequentialConstruction(instance, 0.01, 0.80, 0.19);
+
         while (iterations > 0 && !solution.IsFeasibleSolution())
         {
-            sequentialConstruction = new SequentialConstruction(instance, 0.01, 0.80, 0.19);
             sequentialConstruction.Construct();
+            sequentialConstruction.Reset();
 
             iterations--;
         }
 
-        lns = new LNS(instance, solution, 0.01, 0.80, 0.19);
-        lns.MinimizeCosts(3, 1, 1000, 0.25);
+        lns = new LNS(instance, 0.01, 0.80, 0.19);
+        lns.MinimizeCosts(3, 1, 5000, 0.25);
     }
 
     private static void Output(bool noTimeout, long cpuTime)

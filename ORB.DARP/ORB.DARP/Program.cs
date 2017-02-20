@@ -15,40 +15,47 @@ public class Programm
 
     public static void Main(string[] args)
     {
-        if (args.Length == 0)
-        {
-            Console.WriteLine("No agruments passed!\n");
-            Console.WriteLine("Usage: orbdar [maximum time] instance\n");
-            Console.WriteLine("maximum time (optional): maximum execution time in seconds");
-            Console.WriteLine("instance: full path to the input instance file");
-        }
-        else if (args.Length == 1)
-        {
-            instance = new Instance(args[0]);
-            feasibilityCheck = new FeasibilityCheck(instance);
+        //if (args.Length == 0)
+        //{
+        //    Console.WriteLine("No agruments passed!\n");
+        //    Console.WriteLine("Usage: orbdar [maximum time] instance\n");
+        //    Console.WriteLine("maximum time (optional): maximum execution time in seconds");
+        //    Console.WriteLine("instance: full path to the input instance file");
+        //}
+        //else if (args.Length == 1)
+        //{
+        //    instance = new Instance(args[0]);
+        //    feasibilityCheck = new FeasibilityCheck(instance);
 
-            var stopWatch = Stopwatch.StartNew();
+        //    var stopWatch = Stopwatch.StartNew();
 
-            CreateInitialSolution(10000);
+        //    CreateInitialSolution(10000);
 
-            stopWatch.Stop();
+        //    stopWatch.Stop();
 
-            Output(true, stopWatch.ElapsedMilliseconds / 1000);
-        }
-        else if (args.Length == 2)
-        {
-            instance = new Instance(args[1]);
-            feasibilityCheck = new FeasibilityCheck(instance);
+        //    Output(true, stopWatch.ElapsedMilliseconds / 1000);
+        //}
+        //else if (args.Length == 2)
+        //{
+        //    instance = new Instance(args[1]);
+        //    feasibilityCheck = new FeasibilityCheck(instance);
 
-            var stopWatch = Stopwatch.StartNew();
-            var task = Task.Factory.StartNew(() => CreateInitialSolution(1000000));
-            var noTimeout = task.Wait(int.Parse(args[0]) * 1000);
+        //    var stopWatch = Stopwatch.StartNew();
+        //    var task = Task.Factory.StartNew(() => CreateInitialSolution(1000000));
+        //    var noTimeout = task.Wait(int.Parse(args[0]) * 1000);
 
-            stopWatch.Stop();
+        //    stopWatch.Stop();
 
-            Output(noTimeout, stopWatch.ElapsedMilliseconds / 1000);
-        }
-        
+        //    Output(noTimeout, stopWatch.ElapsedMilliseconds / 1000);
+        //}
+
+        string file = @"F:\Z Studiumsablauf Z\5. Semester\OR2\Project\instances\gen_8_2_75_8_10_1.darp";
+        instance = new Instance(file);
+        sequentialConstruction = new SequentialConstruction(instance, 0.01, 0.80, 0.19);
+        var sol = sequentialConstruction.Construct();
+        Console.WriteLine(sol.ToString());
+
+
         Console.WriteLine("\nPress any key to exit!");
         Console.ReadKey();
     }

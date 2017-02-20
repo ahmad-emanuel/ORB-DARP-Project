@@ -29,7 +29,7 @@ namespace ORB.DARP
         {
             var solution = new List<List<int>>(Instance.Vehicles);
 
-            while (CustomersLeft.Count > 0 && solution.Count != Instance.Vehicles)
+            while (solution.Count != Instance.Vehicles)
             {
                 var route = new List<int>();
 
@@ -58,6 +58,40 @@ namespace ORB.DARP
 
                 solution.Add(route);
             }
+
+
+            while (CustomersLeft.Count > 0)
+            {
+                for (int j = 0; j < Instance.Vehicles; j++)
+                {
+                    for (int i = 0; i < CustomersLeft.Count; i++)
+                    {
+                        var customer = CustomersLeft[RandomNumber.Between(0, CustomersLeft.Count - 1)];
+                        CustomersLeft.Remove(customer);
+
+
+                        solution[j].Add(customer);
+                        solution[j].Add(customer);
+
+                        solution[j] = Climber.Improve(solution[j].ToArray(), j);
+
+                        if (Checker.IsFeasibleRoute(HillClimb.DecodeRoute(solution[j].ToArray()), j))
+                        {
+                            i = -1;
+                            Console.WriteLine(customer + " is added");
+                        }
+                        else
+                        {
+                            CustomersLeft.Add(customer);
+
+                            solution[j].Remove(customer);
+                            solution[j].Remove(customer);
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine(CustomersLeft.ToArray().ToString());
 
             return solution;
         }

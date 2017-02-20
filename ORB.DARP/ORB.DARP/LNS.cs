@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System;
 
 namespace ORB.DARP
 {
@@ -8,17 +7,15 @@ namespace ORB.DARP
         private Instance Instance;
         private HillClimb Climber;
 
-        private Solution BestSolution;
         private Solution CurrentSolution;
         private Solution NewSolution;
 
-        public LNS(Instance instance, Solution solution, double w1, double w2, double w3)
+        public LNS(Instance instance, double w1, double w2, double w3)
         {
             Instance = instance;
             Climber = new HillClimb(Instance, w1, w2, w3);
 
-            BestSolution = solution;
-            CurrentSolution = solution;
+            CurrentSolution = Programm.solution;
         }
 
         private List<int> Destroy(int requests)
@@ -72,10 +69,9 @@ namespace ORB.DARP
                             {
                                 CurrentSolution = NewSolution;
 
-                                if (CurrentSolution.GetObjective() < BestSolution.GetObjective())
+                                if (CurrentSolution.GetObjective() < Programm.solution.GetObjective())
                                 {
-                                    BestSolution = CurrentSolution;
-                                    Programm.solution = BestSolution;
+                                    Programm.solution = CurrentSolution;
                                 }
                             }
                         }

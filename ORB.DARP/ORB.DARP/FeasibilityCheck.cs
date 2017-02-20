@@ -13,6 +13,11 @@ namespace ORB.DARP
 
         public int[] CheckTimeWindows(int[] route)
         {
+            if (route.Length == 0)
+            {
+                return new int[] { 0, 0 };
+            }
+
             var totalTimeWindowsViolations = 0;
 
             var helpRoute = new int[route.Length];
@@ -43,6 +48,11 @@ namespace ORB.DARP
 
         public int CheckCapacities(int[] route, int capacity)
         {
+            if (route.Length == 0)
+            {
+                return 0;
+            }
+
             var totalCapacitiesViolations = 0;
             var customers = 0;
 

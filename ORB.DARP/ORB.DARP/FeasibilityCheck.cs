@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ORB.DARP
 {
@@ -7,18 +6,14 @@ namespace ORB.DARP
     {
         private Instance Instance;
 
-        public int TotalRouteDuration { get; private set; }
-        public int TotalTimeWindowsViolations { get; private set; }
-        public int TotalCapacitiesViolations { get; private set; }
-
         public FeasibilityCheck(Instance instance)
         {
             Instance = instance;
         }
 
-        private void CheckTimeWindows(int[] route)
+        public int[] CheckTimeWindows(int[] route)
         {
-            TotalTimeWindowsViolations = 0;
+            var totalTimeWindowsViolations = 0;
 
             var helpRoute = new int[route.Length];
             helpRoute[0] = Instance.TransitTimes[0, route[0]];
@@ -32,21 +27,23 @@ namespace ORB.DARP
             {
                 if (helpRoute[i] > Instance.TimeWindows[1, route[i]-1] || helpRoute[i] > Instance.MaxTime)
                 {
-                    TotalTimeWindowsViolations++;
+                    totalTimeWindowsViolations++;
                 }
             }
 
-            TotalRouteDuration = helpRoute[route.Length - 1] + Instance.TransitTimes[route[route.Length - 1], 0];
+            var totalRouteDuration = helpRoute[route.Length - 1] + Instance.TransitTimes[route[route.Length - 1], 0];
 
-            if (TotalRouteDuration > Instance.MaxTime)
+            if (totalRouteDuration > Instance.MaxTime)
             {
-                TotalTimeWindowsViolations++;
+                totalTimeWindowsViolations++;
             }
+
+            return new int[] { totalRouteDuration, totalTimeWindowsViolations };
         }
 
-        private void CheckCapacities(int[] route, int capacity)
+        public int CheckCapacities(int[] route, int capacity)
         {
-            TotalCapacitiesViolations = 0;
+            var totalCapacitiesViolations = 0;
             var customers = 0;
 
             for (int i = 0; i < route.Length; i++)
@@ -62,48 +59,11 @@ namespace ORB.DARP
 
                 if(customers > capacity)
                 {
-                    TotalCapacitiesViolations++;
+                    totalCapacitiesViolations++;
                 }
             }
-        }
 
-        public bool IsFeasibleRoute(int[] route, int vehicle)
-        {
-            CheckTimeWindows(route);
-            CheckCapacities(route, Instance.VehicleCapacities[vehicle]);
-
-            if (TotalTimeWindowsViolations == 0 && TotalCapacitiesViolations == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public bool IsFeasibleSolution(Instance instance, List<List<int>> solution)
-        {
-            var customerCount = 0;
-
-            for (int i = 0; i < solution.Count; i++)
-            {
-                //if (!IsFeasibleRoute(solution[i].ToArray(), i))
-                //{
-                //    return false;
-                //}
-
-                customerCount += solution[i].Count/2;
-            }
-
-            if (customerCount == instance.Customers)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return totalCapacitiesViolations;
         }
     }
 }

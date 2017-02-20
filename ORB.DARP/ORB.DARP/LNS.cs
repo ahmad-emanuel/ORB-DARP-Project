@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace ORB.DARP
 {
@@ -6,17 +7,15 @@ namespace ORB.DARP
     {
         private Instance Instance;
         private HillClimb Climber;
-        private FeasibilityCheck Checker;
 
-        private List<List<int>> BestSolution;
-        private List<List<int>> CurrentSolution;
-        private List<List<int>> NewSolution;
+        private Solution BestSolution;
+        private Solution CurrentSolution;
+        private Solution NewSolution;
 
-        public LNS(Instance instance, List<List<int>> solution, double w1, double w2, double w3)
+        public LNS(Instance instance, Solution solution, double w1, double w2, double w3)
         {
             Instance = instance;
-            Checker = new FeasibilityCheck(Instance);
-            Climber = new HillClimb(Instance, Checker, w1, w2, w3);
+            Climber = new HillClimb(Instance, w1, w2, w3);
 
             BestSolution = solution;
             CurrentSolution = solution;
@@ -24,20 +23,19 @@ namespace ORB.DARP
 
         private List<int> Destroy(int requests)
         {
-            NewSolution = CurrentSolution;
+            NewSolution = new Solution(CurrentSolution);
             
             var relaxedCustomer = new List<int>();
 
             for (int i = 0; i < requests; i++)
             {
-                var randomCustomer = RandomNumber.Between(1, Instance.Customers);
+                var randomCustomer = RandomNumber.IntBetween(1, Instance.Customers);
 
-                for (int j = 0; j < NewSolution.Count; j++)
+                for (int j = 0; j < NewSolution.GetVehicleCount(); j++)
                 {
-                    if (NewSolution[j].Contains(randomCustomer))
+                    if (NewSolution.GetRoute(j).GetCustomers().Contains(randomCustomer))
                     {
-                        NewSolution[j].Remove(randomCustomer);
-                        NewSolution[j].Remove(randomCustomer);
+                        NewSolution.GetRoute(j).RemoveCustomer(randomCustomer);
 
                         relaxedCustomer.Add(randomCustomer);
                     }
@@ -51,17 +49,14 @@ namespace ORB.DARP
         {
             foreach (var customer in relaxedCustomer)
             {
-                var random = RandomNumber.Between(0, Instance.Vehicles - 1);
-                var route = NewSolution[random];
+                var random = RandomNumber.IntBetween(0, Instance.Vehicles - 1);
+                NewSolution.GetRoute(random).AddCustomer(customer);
 
-                route.Add(customer);
-                route.Add(customer);
-
-                NewSolution[random] = Climber.Improve(route.ToArray(), random);
+                Climber.Improve(NewSolution.GetRoute(random), random);
             }
         }
 
-        public List<List<int>> MinimizeCosts(int maxSize, int range, int iterations)
+        public Solution MinimizeCosts(int maxSize, int range, int iterations, double probability)
         {
             for (int i = 2; i <= maxSize-range; i++)
             {
@@ -69,15 +64,18 @@ namespace ORB.DARP
                 {
                     for (int k = 0; k < iterations; k++)
                     {
-                        Repair(Destroy(i + j)); // Check Feasiblity
+                        Repair(Destroy(i + j));
 
-                        if (Programm.GetObjective(NewSolution) < Programm.GetObjective(CurrentSolution))
+                        if (NewSolution.IsFeasibleSolution())
                         {
-                            CurrentSolution = NewSolution;
-
-                            if (Programm.GetObjective(CurrentSolution) < Programm.GetObjective(BestSolution))
+                            if (NewSolution.GetObjective() < CurrentSolution.GetObjective() || RandomNumber.DoubleBetween(0, 1) < probability)
                             {
-                                BestSolution = CurrentSolution;
+                                CurrentSolution = NewSolution;
+
+                                if (CurrentSolution.GetObjective() < BestSolution.GetObjective())
+                                {
+                                    BestSolution = CurrentSolution;
+                                }
                             }
                         }
                     }

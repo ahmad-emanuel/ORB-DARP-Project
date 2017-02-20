@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System;
 
 namespace ORB.DARP
 {
@@ -7,15 +6,13 @@ namespace ORB.DARP
     {
         private Instance Instance;
         private HillClimb Climber;
-        private FeasibilityCheck Checker;
 
         private List<int> CustomersLeft;
 
         public SequentialConstruction(Instance instance, double w1, double w2, double w3)
         {
             Instance = instance;
-            Checker = new FeasibilityCheck(Instance);
-            Climber = new HillClimb(Instance, Checker, w1, w2, w3);
+            Climber = new HillClimb(Instance, w1, w2, w3);
 
             CustomersLeft = new List<int>(Instance.Customers);
 
@@ -25,25 +22,24 @@ namespace ORB.DARP
             }
         }
 
-        public List<List<int>> Construct()
+        public Solution Construct()
         {
-            var solution = new List<List<int>>(Instance.Vehicles);
+            var solution = new Solution(Instance);
 
-            while (CustomersLeft.Count > 0 && solution.Count != Instance.Vehicles)
+            while (CustomersLeft.Count > 0 && solution.GetVehicleCount() != Instance.Vehicles)
             {
-                var route = new List<int>();
+                var route = new Route(Instance);
 
                 for (int i = 0; i < CustomersLeft.Count; i++)
                 {
-                    var customer = CustomersLeft[RandomNumber.Between(0, CustomersLeft.Count-1)];
+                    var customer = CustomersLeft[RandomNumber.IntBetween(0, CustomersLeft.Count-1)];
                     CustomersLeft.Remove(customer);
 
-                    route.Add(customer);
-                    route.Add(customer);
+                    route.AddCustomer(customer);
 
-                    route = Climber.Improve(route.ToArray(), solution.Count);
+                    Climber.Improve(route, solution.GetVehicleCount());
                     
-                    if (Checker.IsFeasibleRoute(HillClimb.DecodeRoute(route.ToArray()), solution.Count))
+                    if (route.IsFeasibleRoute(solution.GetVehicleCount()))
                     {
                         i = -1;
                     }
@@ -51,12 +47,11 @@ namespace ORB.DARP
                     {
                         CustomersLeft.Add(customer);
 
-                        route.Remove(customer);
-                        route.Remove(customer);
+                        route.RemoveCustomer(customer);
                     }
                 }
 
-                solution.Add(route);
+                solution.AddRouteToSolution(route);
             }
 
             return solution;

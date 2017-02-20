@@ -1,6 +1,5 @@
 ﻿using ORB.DARP;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -8,10 +7,10 @@ using System.Threading.Tasks;
 public class Programm
 {
     private static Instance instance;
-    private static FeasibilityCheck feasibilityCheck;
     private static SequentialConstruction sequentialConstruction;
+    private static LNS lns;
 
-    private static List<List<int>> solution = new List<List<int>>();
+    private static Solution solution;
 
     public static void Main(string[] args)
     {
@@ -25,11 +24,11 @@ public class Programm
         else if (args.Length == 1)
         {
             instance = new Instance(args[0]);
-            feasibilityCheck = new FeasibilityCheck(instance);
+            solution = new Solution(instance);
 
             var stopWatch = Stopwatch.StartNew();
 
-            CreateInitialSolution(10000);
+            FindSolution(1000);
 
             stopWatch.Stop();
 
@@ -38,10 +37,10 @@ public class Programm
         else if (args.Length == 2)
         {
             instance = new Instance(args[1]);
-            feasibilityCheck = new FeasibilityCheck(instance);
+            solution = new Solution(instance);
 
             var stopWatch = Stopwatch.StartNew();
-            var task = Task.Factory.StartNew(() => CreateInitialSolution(1000000));
+            var task = Task.Factory.StartNew(() => FindSolution(1000000));
             var noTimeout = task.Wait(int.Parse(args[0]) * 1000);
 
             stopWatch.Stop();
@@ -53,38 +52,41 @@ public class Programm
         Console.ReadKey();
     }
 
-    private static void CreateInitialSolution(int iterations)
+    private static void FindSolution(int iterations)
     {
-        while (iterations > 0 && !feasibilityCheck.IsFeasibleSolution(instance, solution))
+        while (iterations > 0 && !solution.IsFeasibleSolution())
         {
             sequentialConstruction = new SequentialConstruction(instance, 0.01, 0.80, 0.19);
             solution = sequentialConstruction.Construct();
 
             iterations--;
         }
+
+        lns = new LNS(instance, solution, 0.01, 0.80, 0.19);
+        solution = lns.MinimizeCosts(3, 1, iterations, 0.25);
     }
 
     private static void Output(bool noTimeout, long cpuTime)
     {
-        solution = HillClimb.DecodeSolution(solution);
-
-        if (feasibilityCheck.IsFeasibleSolution(instance, solution))
+        if (solution.IsFeasibleSolution())
         {
+            solution.DecodeSolution();
+
             var sol = File.AppendText(instance.OutPath);
 
             Console.WriteLine("###RESULT: Feasible.");
             sol.WriteLine("###RESULT: Feasible.");
-            Console.Write("###COST: {0}", GetObjective(solution));
-            sol.Write("###COST: {0}", GetObjective(solution));
+            Console.Write("###COST: {0}", solution.GetObjective());
+            sol.Write("###COST: {0}", solution.GetObjective());
 
-            for (int i = 1; i <= solution.Count; i++)
+            for (int i = 1; i <= solution.GetVehicleCount(); i++)
             {
                 Console.Write("\n###VEHICLE {0}: ", i);
                 sol.Write("\n###VEHICLE {0}: ", i);
-                foreach (var node in solution[i - 1])
+                foreach (var customer in solution.GetRoute(i-1).GetCustomers())
                 {
-                    Console.Write("{0} ", node);
-                    sol.Write("{0} ", node);
+                    Console.Write("{0} ", customer);
+                    sol.Write("{0} ", customer);
                 }
             }
 
@@ -104,33 +106,5 @@ public class Programm
                 Console.WriteLine("###RESULT: Timeout.");
             }
         }
-        
-    }
-
-    public static int GetObjective(List<List<int>> solution)
-    {
-        var costs = 0;
-        var vehicle = 0;
-
-        foreach (var route in solution)
-        {
-            costs += instance.TransitCosts[0, route[0]];
-
-            for (int i = 0; i <= route.Count-2; i++)
-            {
-                costs += instance.TransitCosts[route[i], route[i+1]];
-
-                if (route[i] <= instance.Customers)
-                {
-                    costs += instance.Preferences[vehicle, route[i]-1];
-                }
-            }
-
-            costs += instance.TransitCosts[route[route.Count-1], 0];
-
-            vehicle++;
-        }
-
-        return costs;
     }
 }

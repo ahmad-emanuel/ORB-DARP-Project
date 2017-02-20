@@ -22,7 +22,7 @@ namespace ORB.DARP
             }
         }
 
-        public Solution Construct()
+        public void Construct()
         {
             var solution = new Solution(Instance);
 
@@ -54,7 +54,7 @@ namespace ORB.DARP
                 solution.AddRouteToSolution(route);
             }
 
-            return solution;
+            Programm.solution = solution;
         }
     }
 }

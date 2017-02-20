@@ -56,7 +56,7 @@ namespace ORB.DARP
             }
         }
 
-        public Solution MinimizeCosts(int maxSize, int range, int iterations, double probability)
+        public void MinimizeCosts(int maxSize, int range, int iterations, double probability)
         {
             for (int i = 2; i <= maxSize-range; i++)
             {
@@ -75,14 +75,13 @@ namespace ORB.DARP
                                 if (CurrentSolution.GetObjective() < BestSolution.GetObjective())
                                 {
                                     BestSolution = CurrentSolution;
+                                    Programm.solution = BestSolution;
                                 }
                             }
                         }
                     }
                 }
             }
-
-            return BestSolution;
         }
     }
 }

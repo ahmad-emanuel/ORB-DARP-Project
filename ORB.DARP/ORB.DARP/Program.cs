@@ -10,7 +10,7 @@ public class Programm
     private static SequentialConstruction sequentialConstruction;
     private static LNS lns;
 
-    private static Solution solution;
+    public static Solution solution { get; set; }
 
     public static void Main(string[] args)
     {
@@ -57,13 +57,13 @@ public class Programm
         while (iterations > 0 && !solution.IsFeasibleSolution())
         {
             sequentialConstruction = new SequentialConstruction(instance, 0.01, 0.80, 0.19);
-            solution = sequentialConstruction.Construct();
+            sequentialConstruction.Construct();
 
             iterations--;
         }
 
         lns = new LNS(instance, solution, 0.01, 0.80, 0.19);
-        solution = lns.MinimizeCosts(3, 1, iterations, 0.25);
+        lns.MinimizeCosts(3, 1, 1000, 0.25);
     }
 
     private static void Output(bool noTimeout, long cpuTime)

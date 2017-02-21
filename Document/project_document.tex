@@ -22,39 +22,48 @@
 \tableofcontents
 \section{Initial solution}
 
-For our initial solution we decided to use a sequential construction algorithm with a hill climbing algorithm introduced in $[HoMu 12]$. We have chosen these algorithms because they seemed to produce good and fast initial solutions in the literature. We had to do some little adjustments because we could not open as many routes as we want to because we have a fix number of vehicles. In line 1 we chose a random customer from a list of customers which have no route yet and insert it into the route. In line 2 the hill climbing algorithm improves the route with the new customer. In line 3 we check if the new route is feasible. If it is feasible the customer can stay in the route, else the customer gets removed again. Line 5 says that if no of the left customers can be added to the route without making it infeasible the algorithm starts again with a new route. After all vehicles have their route we check if the solution is feasible. If it is feasible we chose it as our initial solution. Otherwise we restart the whole sequential construction algorithm.
+For our initial solution we decided to use a sequential construction algorithm with a hill climbing algorithm introduced in $[HoMu 12]$. We have chosen these algorithms because they seemed to produce good and fast initial solutions in the literature. We had to do some little adjustments because we could not open as many routes as we want because we have a fix number of vehicles. In line 1 we choose a random customer from a list of customers which are not assigned to a route yet and insert him into the current route. In line 2 the hill climbing algorithm tries to improve the route with the new inserted customer. In line 3 we check if the new route is feasible. If it is feasible the customer stays in the route, else the customer gets removed again. Line 5 says that if none of the left customers can be added to the route without making it infeasible the algorithm starts again with a new route. After all vehicles have their route we check if the solution is feasible. If it is feasible we choose it as our initial solution. Otherwise we restart the whole sequential construction algorithm.
 \\
 \\  
-In line 1 of the hill climbing algorithm we have a for loop for every pair of locations in the route. In line 2 we switch the locations if the latter location has a later upper time window.
-In line 3 we calculate the new cost function. The cost function is dependant of the route duration, the number of time window violations and the number of capacity violations. They are weighted with w1, w2 and w3 equal to 1. If the new route is better we keep the route in line 4. Else we switch it back (line 5).
+In line 1 of the hill climbing algorithm we have a for loop for each pair of locations in the route. In line 2 we switch the locations if the latter location has a later upper time window.
+In line 3 we calculate the new cost function. The cost function is dependant of the route duration, the number of time window violations and the number of capacity violations. They are weighted with w1, w2 and w3 equal to 1. If the new route is better we keep the route in line 4, else we switch it back (line 5).
 
 \begin{algorithm}
-\caption{Sequential construction}\label{euclid}
+\caption{Sequential construction}\label{sequential}
 \begin{algorithmic}[1]
-
-\State Chose random customer which is not yet in a route and insert it into the route
-\State Let hill climbing algorithm improve the route
-
-\If {(route is feasible)} customer stays in the route \Else ~customer gets removed again
+\State Initialize an empty solution $s$
+\Repeat
+\State Initialize an empty route $r$
+\For {(All unassigned customers)}
+\State Get a random next customer $i$
+\State Insert the customer $i$ at the end of the current route $r$
+\State Call HC (Algorithm 2) to improve route $r$
+\If {(route $r$ is feasible)}
+\State Mark $i$ as inserted
+\Else
+\State Remove $i$ from route $r$
 \EndIf
-\If {(no feasible customer can be added to the route)} algorithm starts again for the next route
-\EndIf
+\EndFor
+\State Add route $r$ to solution $s$
+\Until {(All customers have been inserted $\lor$ $\vert s \vert = \vert Vehicles \vert$)}
 \end{algorithmic}
 \end{algorithm}
 
-\\
-
 \begin{algorithm}
-\caption{Hill climbing}\label{euclid}
+\caption{Hill climbing}\label{hillclimb}
 \begin{algorithmic}[1]
-
-\For {each possible pair of locations}
-\State Switch the locations if the latter location has a later upper time window
-\State Calculate the cost function of the new route
-\If {(new root is better)} keep the new route \Else ~switch it back
+\State Given a route $r$
+\Repeat
+\For {(Each possible pair of locations)}
+\If {(The latter location is more urgent in its upper time window bound)}
+\State Swap the current two locations in $r$ to get a new route $r'$
+\State Calculate $cost(r)$ and $cost(r')$
+\If {($cost(r)-cost(r') > 0$)}
+\State $r\gets r'$
 \EndIf
-
-
+\EndIf
+\EndFor
+\Until {(Done)} \{Stop when no improvement achieved in the previous pass\}
 \end{algorithmic}
 \end{algorithm}
 

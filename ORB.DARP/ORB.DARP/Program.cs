@@ -48,8 +48,8 @@ public class Programm
             Output(noTimeout, stopWatch.ElapsedMilliseconds / 1000);
         }
         
-        Console.WriteLine("\nPress any key to exit!");
-        Console.ReadKey();
+        //Console.WriteLine("\nPress any key to exit!");
+        //Console.ReadKey();
     }
 
     private static void FindSolution(int iterations)
@@ -64,8 +64,10 @@ public class Programm
             iterations--;
         }
 
+        Console.WriteLine("Initial objective: {0}", solution.GetObjective());
+
         lns = new LNS(instance, 0.01, 0.80, 0.19);
-        lns.MinimizeCosts(3, 1, 5000, 0.25);
+        lns.MinimizeCosts(5, 1, 50000, 0.25);
     }
 
     private static void Output(bool noTimeout, long cpuTime)

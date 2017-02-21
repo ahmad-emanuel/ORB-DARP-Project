@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace ORB.DARP
 {
@@ -62,6 +63,39 @@ namespace ORB.DARP
             return route.ToList();
         }
 
+        public List<int> ExtendedImprove(int[] route, int vehicle, int CustomerLeft)
+        {
+            var InitialRoute = route;
+
+            for (int i = 0; i < route.Length; i++)
+            {
+                for (int j = i + 1; j < route.Length; j++)
+                {
+                    int[] NewRoute = InitialRoute;
+
+                    Checker.IsFeasibleRoute(DecodeRoute(route), vehicle);
+                    var costOldRoute = Checker.TotalTimeWindowsViolations + Checker.TotalCapacitiesViolations;
+
+                    NewRoute = ShiftFromToRight(NewRoute, i);
+                    NewRoute[i] = CustomerLeft;
+
+                    NewRoute = ShiftFromToRight(NewRoute, j);
+                    NewRoute[j] = CustomerLeft;
+
+                    Checker.IsFeasibleRoute(DecodeRoute(NewRoute), vehicle);
+                    var costNewRoute = Checker.TotalTimeWindowsViolations + Checker.TotalCapacitiesViolations;
+
+                    if (costNewRoute < costOldRoute)
+                    {
+                        route = NewRoute;
+                        Console.WriteLine("etwas gefunden");
+                    }
+                }
+            }
+
+            return route.ToList();
+        }
+
         private static int Decode(int[] route, int customer, int index)
         {
             var i = 0;
@@ -111,6 +145,14 @@ namespace ORB.DARP
             Checker.IsFeasibleRoute(DecodeRoute(route), vehicle);
 
             return w1 * Checker.TotalRouteDuration + w2 * Checker.TotalTimeWindowsViolations + w3 * Checker.TotalCapacitiesViolations;
+        }
+
+        public int[] ShiftFromToRight(int[] route , int index)
+        {
+            var shifted = new int[route.Length];
+            Array.Copy(route, shifted, index);
+            Array.Copy(route, index, shifted, index + 1, route.Length - index - 1);
+            return shifted;
         }
     }
 }

@@ -62,31 +62,30 @@ namespace ORB.DARP
 
             while (CustomersLeft.Count > 0)
             {
+                
+
                 for (int j = 0; j < Instance.Vehicles; j++)
                 {
-                    for (int i = 0; i < CustomersLeft.Count; i++)
+                    var customer = CustomersLeft[0];
+                    CustomersLeft.Remove(customer);
+
+                    solution[j].Add(customer);
+                    solution[j].Add(customer);
+
+                    solution[j] = Climber.ExtendedImprove(solution[j].ToArray(), j,customer);
+
+                    if (Checker.IsFeasibleRoute(HillClimb.DecodeRoute(solution[j].ToArray()), j))
                     {
-                        var customer = CustomersLeft[RandomNumber.Between(0, CustomersLeft.Count - 1)];
-                        CustomersLeft.Remove(customer);
+                        Console.WriteLine(customer + " is added");
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine(customer + " is deleted");
+                        CustomersLeft.Add(customer);
 
-
-                        solution[j].Add(customer);
-                        solution[j].Add(customer);
-
-                        solution[j] = Climber.Improve(solution[j].ToArray(), j);
-
-                        if (Checker.IsFeasibleRoute(HillClimb.DecodeRoute(solution[j].ToArray()), j))
-                        {
-                            i = -1;
-                            Console.WriteLine(customer + " is added");
-                        }
-                        else
-                        {
-                            CustomersLeft.Add(customer);
-
-                            solution[j].Remove(customer);
-                            solution[j].Remove(customer);
-                        }
+                        solution[j].Remove(customer);
+                        solution[j].Remove(customer);
                     }
                 }
             }

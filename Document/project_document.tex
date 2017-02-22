@@ -26,7 +26,8 @@
 For our initial solution we decided to use a sequential construction algorithm with a hill climbing algorithm introduced in $[HoMu 12]$. We have chosen these algorithms because they seemed to produce good and fast initial solutions in the literature. We had to do some little adjustments because we could not open as many routes as we want because we have a fix number of vehicles. In line 1 we initialize an empty solution. Then we repeat the following until all customers have been inserted into a route or the number of routes is the number of vehicles we have: Initialize an empty route r (line 3). Then we have a for loop for all unassigned customers. In line 5 we get a random customer i. Then we insert the customer i at the end of the current route. In line 7 we call the hill climbing algorithm to improve the route r. If the new toot is feasible we mark customer i as inserted. If it is not feasible we remove i from the route again. After the for loop for all unassigned customers has finished we add the route r to the solution in line 12.
 \\
 \\  
-In the hill climbing algorithm to improve the routes we have given a route r. Then we repeat the following until no improvement is achived in the previous pass: The for loop for each possible pair of locations starts (line 3). If the latter location is more urgent in its upper time window (line 4) then we swap the current two locations in r to get a new route r'. In line 6 we calculate the cost function for r and r'. If the new route has a better cost function value we set $r\gets r'$.
+In the hill climbing algorithm to improve the routes we have given a route r. Then we repeat the following until no improvement is achived in the previous pass: The for loop for each possible pair of locations starts (line 3). If the latter location is more urgent in its upper time window (line 4) then we swap the current two locations in r to get a new route r'. In line 6 we calculate the cost function for r and r'. If the new route has a better cost function value we set $r\gets r'$.\\
+The cost function is dependant of the route duration, the number of time window violations and the number of capacity violations. Their weights w1, w2 and w3 have to be equal to 1.
 
 \begin{algorithm}
 \caption{Sequential construction}\label{sequential}
@@ -76,6 +77,10 @@ The sequential construction algorithm adds random customers to the route and aft
 
 \newpage
 \section{Large neighborhood search}
+
+The large neighborhood search tries to improve the solution we already have. The approach was intrudced in $[JaHe 11]$. The algorithm gets the parameters maxSize (the maximum number of customers to be removed), range (to increase the neighborhood size progressively), iterations (the number of iterations) and probability (the probability to accept a worse solution). \\
+We have given a solution s and set $current$ to the solution $s$ in line 2. Then we have 3 nested for loops in which we produce a new solution $new$ by removing radomly i+j customers from the current solution. In line 7 we start another for loop for all removed customers. We add the customer to a randomly selected route $r$ in the new route $new$. then we always improve the route by calling the hill climbing algorithm. After the for loop we generate a random number $pr$ between 0 and 1 in line 10. If the new solution is feasible we check if the cost function of the new solution has a better value than the cost function of the current solution. If this is the case or if $pr$ is smaller than $probability$ we set $current$ = $new$. Then we check if the cust function value of the current solution is smaller than the cost function value of the given solution $s$ (line 14). If it is better we update our solution $s$ by setting it to our $current$ solution.
+ 
 \begin{algorithm}
 \caption{LNS ($maxSize, range, iterations, probability$)}\label{lns}
 \begin{algorithmic}[1]

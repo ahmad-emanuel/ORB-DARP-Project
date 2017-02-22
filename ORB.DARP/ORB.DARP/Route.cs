@@ -73,16 +73,6 @@ namespace ORB.DARP
             return Customers;
         }
 
-        public void SetCustomers(List<int> customers)
-        {
-            Customers = customers;
-        }
-
-        public int[] ToArray()
-        {
-            return Customers.ToArray();
-        }
-
         public int Decode(int customer, int index)
         {
             var i = 0;

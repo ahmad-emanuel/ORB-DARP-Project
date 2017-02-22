@@ -5,8 +5,7 @@ namespace ORB.DARP
 {
     public class Instance
     {
-        private string InPath;
-        public string OutPath { get; private set; }
+        private string Path;
 
         public int Customers { get; private set; }
         public int MaxTime { get; private set; }
@@ -19,15 +18,14 @@ namespace ORB.DARP
 
         public Instance(string path)
         {
-            InPath = path;
-            OutPath = InPath.Split('.')[0] + "_sol.txt";
+            Path = path;
 
             Initialization();
         }
 
         private void Initialization()
         {
-            var temp = File.ReadLines(InPath)
+            var temp = File.ReadLines(Path)
                 .Select(line => line.Split(' '))
                 .ToArray();
 

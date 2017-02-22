@@ -22,11 +22,10 @@
 \tableofcontents
 \section{Initial solution}
 
-For our initial solution we decided to use a sequential construction algorithm with a hill climbing algorithm introduced in $[HoMu 12]$. We have chosen these algorithms because they seemed to produce good and fast initial solutions in the literature. We had to do some little adjustments because we could not open as many routes as we want because we have a fix number of vehicles. In line 1 we choose a random customer from a list of customers which are not assigned to a route yet and insert him into the current route. In line 2 the hill climbing algorithm tries to improve the route with the new inserted customer. In line 3 we check if the new route is feasible. If it is feasible the customer stays in the route, else the customer gets removed again. Line 5 says that if none of the left customers can be added to the route without making it infeasible the algorithm starts again with a new route. After all vehicles have their route we check if the solution is feasible. If it is feasible we choose it as our initial solution. Otherwise we restart the whole sequential construction algorithm.
+For our initial solution we decided to use a sequential construction algorithm with a hill climbing algorithm introduced in $[HoMu 12]$. We have chosen these algorithms because they seemed to produce good and fast initial solutions in the literature. We had to do some little adjustments because we could not open as many routes as we want because we have a fix number of vehicles. In line 1 we initialize an empty solution. Then we repeat the following until all customers have been inserted into a route or the number of routes is the number of vehicles we have: Initialize an empty route r (line 3). Then we have a for loop for all unassigned customers. In line 5 we get a random customer i. Then we insert the customer i at the end of the current route. In line 7 we call the hill climbing algorithm to improve the route r. If the new toot is feasible we mark customer i as inserted. If it is not feasible we remove i from the route again. After the for loop for all unassigned customers has finished we add the route r to the solution in line 12.
 \\
 \\  
-In line 1 of the hill climbing algorithm we have a for loop for each pair of locations in the route. In line 2 we switch the locations if the latter location has a later upper time window.
-In line 3 we calculate the new cost function. The cost function is dependant of the route duration, the number of time window violations and the number of capacity violations. They are weighted with w1, w2 and w3 equal to 1. If the new route is better we keep the route in line 4, else we switch it back (line 5).
+In the hill climbing algorithm to improve the routes we have given a route r. Then we repeat the following until no improvement is achived in the previous pass: The for loop for each possible pair of locations starts (line 3). If the latter location is more urgent in its upper time window (line 4) then we swap the current two locations in r to get a new route r'. In line 6 we calculate the cost function for r and r'. If the new route has a better cost function value we set $r\gets r'$.
 
 \begin{algorithm}
 \caption{Sequential construction}\label{sequential}
@@ -80,9 +79,8 @@ The sequential construction algorithm adds random customers to the route and aft
 ToDo
 \newpage
 \section{Relevant work in the literature}
-ToDo \\
-\\
-
+In the literature nearly all possible metaheuristics have been tested for the dial-a-ride problem. 
+$[JaHe 11]$ introduced a large neighborhood search for the problem. It seemed to work well which is the reason why we decided to implement this metaheuristic. A different approach was introduced in $[CoLa 03]$ where they used a tabu search heuristic for the dial-a-ride problem. In $[Parragh$  $et$  $al.$ $10]$ they used a variable neighborhood search to solve the problem. In $[Jørgensen et al. 07]$ genetic algorithms were introduced the solve the dial-a-ride problem.
 \newpage
 \section{How to compile and run the code}
 ToDo
@@ -102,7 +100,12 @@ $[HoMu 12]$ M. I. Hosny and C. L.Mumford, “Constructing initial solutions for 
 \\
 \\
 $[JaHe 11]$ S. Jain , P. Van Hentenryck, “Large neighborhood search for dial-a-ride problems”, In: Principles and practice of constraint programming, Notes in computer science, vol. 6876. Springer, 2011.
+\\
+\\
+$[CoLa 03]$ J.-F. Cordeau, G. Laporte, "A tabu search heuristic for the static multi- vehicle dial-a-ride problem", Transportation Research Part B 37: 579–594, 2003
+\\
+\\
+$[Parragh$  $et$  $al.$ $10]$ S.N. Parragh, K.F. Doerner, R.F. Hartl, "Variable neighborhood search for the dial-a-ride problem", Computers & Operations Research 37 (6),1129–1138, 2010. 
 
-
-
+$[Jørgensen et al. 07]$ R.M. Jørgensen , J. Larsen, K.B. Bergvinsdottir, "Solving the dial-a-ride problem using genetic algorithms", J Oper Res Soc 58:1321–1331, 2007.
 \end{document}

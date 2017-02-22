@@ -44,7 +44,7 @@ In the hill climbing algorithm to improve the routes we have given a route r. Th
 \EndIf
 \EndFor
 \State Add route $r$ to solution $s$
-\Until {(All customers have been inserted $\lor$ $\vert s \vert = \vert Vehicles \vert$)}
+\Until {(All customers have been inserted OR $\vert s \vert = \vert Vehicles \vert$)}
 \end{algorithmic}
 \end{algorithm}
 
@@ -58,14 +58,13 @@ In the hill climbing algorithm to improve the routes we have given a route r. Th
 \State Swap the current two locations in $r$ to get a new route $r'$
 \State Calculate $cost(r)$ and $cost(r')$
 \If {($cost(r)-cost(r') > 0$)}
-\State $r\gets r'$
+\State $r \gets r'$
 \EndIf
 \EndIf
 \EndFor
 \Until {(Done)} \{Stop when no improvement achieved in the previous pass\}
 \end{algorithmic}
 \end{algorithm}
-
 
 
 \subsection{Different approaches}
@@ -76,7 +75,33 @@ The sequential construction algorithm adds random customers to the route and aft
 
 \newpage
 \section{Large neighborhood search}
-ToDo
+\begin{algorithm}
+\caption{LNS ($maxSize, range, iterations, probability$)}\label{lns}
+\begin{algorithmic}[1]
+\State Given a solution s
+\State $current \gets s$
+\For {($i \gets 2; i \leq masSize-range; i \gets i+1$)}
+\For {($j \gets 0; j \leq range; j \gets j+1$)}
+\For {($k \gets 0; k < iterations; k \gets k+1$)}
+\State $new \gets$ Remove randomly $i+j$ customer in $current$
+\For {(All removed customer)}
+\State Add customer to a randomly selected route $r$ in $new$
+\State Call HC (Algorithm 2) to improve route $r$
+\EndFor
+\State $pr \gets$ random number between 0 and 1
+\If {($new$ is feasible solution)}
+\If {($cost(new) < cost(current)$ OR $pr < probability$)}
+\State $current = new$
+\If {($cost(current) < cost(s)$)}
+\State $s = current$
+\EndIf
+\EndIf
+\EndIf
+\EndFor
+\EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 \newpage
 \section{Relevant work in the literature}
 In the literature nearly all possible metaheuristics have been tested for the dial-a-ride problem. 

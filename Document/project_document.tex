@@ -18,15 +18,15 @@
 \tableofcontents
 \section{Initial solution}
 
-For our initial solution we decided to use a sequential construction algorithm with a hill climbing algorithm introduced in $[HoMu 12]$. We have chosen these algorithms because they seemed to produce good and fast initial solutions in the literature. We had to do some little adjustments because we could not open as many routes as we want because we have a fix number of vehicles. In line 1 of Algorithm~\ref{sequential} we initialize an empty solution. Then we repeat the following until all customers have been inserted into a route or the number of routes is the number of vehicles we have: Initialize an empty route r (line 3). Then we have a for loop for all unassigned customers. In line 5 we get a random customer i. Then we insert the customer i at the end of the current route. In line 7 we call the hill climbing algorithm to improve the route r. If the new toot is feasible we mark customer i as inserted. If it is not feasible we remove i from the route again. After the for loop for all unassigned customers has finished we add the route r to the solution in line 12.
+For our initial solution we decided to use a sequential construction algorithm with a hill climbing algorithm introduced in $[HoMu 12]$. We have chosen these algorithms because they seemed to produce good and fast initial solutions in the literature. We had to do some little adjustments because we could not open as many routes as we want because we have a fix number of vehicles. In line 1 of Algorithm~\ref{algo:sequential} we initialize an empty solution. Then we repeat the following until all customers have been inserted into a route or the number of routes is the number of vehicles we have: Initialize an empty route r (line 3). Then we have a for loop for all unassigned customers. In line 5 we get a random customer i. Then we insert the customer i at the end of the current route. In line 7 we call the hill climbing algorithm to improve the route r. If the new toot is feasible we mark customer i as inserted. If it is not feasible we remove i from the route again. After the for loop for all unassigned customers has finished we add the route r to the solution in line 12.
 \\
 \\  
-In the hill climbing see Algorithm~\ref{hillclimb} to improve the routes we have given a route r. Then we repeat the following until no improvement is achieved in the previous pass: The for loop for each possible pair of locations starts (line 3). If the latter location is more urgent in its upper time window (line 4) then we swap the current two locations in r to get a new route r'. In line 6 we calculate the cost function for r and r'. If the new route has a better cost function value we set $r\gets r'$.\\
+In the hill climbing see Algorithm~\ref{algo:hillclimb} to improve the routes we have given a route r. Then we repeat the following until no improvement is achieved in the previous pass: The for loop for each possible pair of locations starts (line 3). If the latter location is more urgent in its upper time window (line 4) then we swap the current two locations in r to get a new route r'. In line 6 we calculate the cost function for r and r'. If the new route has a better cost function value we set $r\gets r'$.\\
 The cost function is dependent of the route duration, the number of time window violations and the number of capacity violations. Their weights w1, w2 and w3 have to be equal to 1.
 
 \begin{algorithm}
 \caption{Sequential construction}
-\label{sequential}
+\label{algo:sequential}
 \begin{algorithmic}[1]
 \State Initialize an empty solution $s$
 \Repeat
@@ -34,7 +34,7 @@ The cost function is dependent of the route duration, the number of time window 
 \For {(All unassigned customers)}
 \State Get a random next customer $i$
 \State Insert the customer $i$ at the end of the current route $r$
-\State Call HC (Algorithm~\ref{hillclimb}) to improve route $r$
+\State Call HC (Algorithm~\ref{algo:hillclimb}) to improve route $r$
 \If {(route $r$ is feasible)}
 \State Mark $i$ as inserted
 \Else
@@ -48,7 +48,7 @@ The cost function is dependent of the route duration, the number of time window 
 
 \begin{algorithm}
 \caption{Hill climbing}
-\label{hillclimb}
+\label{algo:hillclimb}
 \begin{algorithmic}[1]
 \State Given a route $r$
 \Repeat
@@ -80,12 +80,12 @@ Inspired by $[HoMu 12]$ we tried different approaches by constructing the routes
 
 \newpage
 \section{Large neighborhood search}
-The large neighborhood search tries to improve a given solution. The approach was introduced in $[JaHe 11]$. The algorithm gets the parameters maxSize (the maximum number of customers to be removed), range (to increase the neighborhood size progressively), iterations (the number of iterations) and probability (the probability to accept a worse solution). \\
+The large neighborhood search in Algorithm~\ref{algo:lns} tries to improve a given solution. The approach was introduced in $[JaHe 11]$. The algorithm gets the parameters maxSize (the maximum number of customers to be removed), range (to increase the neighborhood size progressively), iterations (the number of iterations) and probability (the probability to accept a worse solution). \\
 We have given a solution s and set $current$ to the solution $s$ in line 2. Then we have 3 nested for loops in which we produce a new solution $new$ by removing randomly i+j customers from the current solution. In line 7 we start another for loop for all removed customers. We add the customer to a randomly selected route $r$ in the new route $new$. then we always improve the route by calling the hill climbing algorithm. After the for loop we generate a random number $pr$ between 0 and 1 in line 10. If the new solution is feasible we check if the cost function of the new solution has a better value than the cost function of the current solution. If this is the case or if $pr$ is smaller than $probability$ we set $current$ = $new$. Then we check if the cust function value of the current solution is smaller than the cost function value of the given solution $s$ (line 14). If it is better we update our solution $s$ by setting it to our $current$ solution.
  
 \begin{algorithm}
 \caption{LNS ($maxSize, range, iterations, probability$)}
-\label{lns}
+\label{algo:lns}
 \begin{algorithmic}[1]
 \State Given a solution s
 \State $current \gets s$
@@ -95,7 +95,7 @@ We have given a solution s and set $current$ to the solution $s$ in line 2. Then
 \State $new \gets$ Remove randomly $i+j$ customer in $current$
 \For {(All removed customer)}
 \State Add customer to a randomly selected route $r$ in $new$
-\State Call HC (Algorithm~\ref{hillclimb}) to improve route $r$
+\State Call HC (Algorithm~\ref{algo:hillclimb}) to improve route $r$
 \EndFor
 \State $pr \gets$ random number between 0 and 1
 \If {($new$ is feasible solution)}
@@ -131,21 +131,19 @@ Example: \textit{orbdar.exe [optional: 60]  gen\_10\_2\_75\_8\_10\_1.darp}
 In experimental results we tested the performance of the LNS. We found out that the following parameter performed best. For the hill climber we used a wight of 0.01 for the route duration, 0.80 for the time window violations and 0.19 for the capacity violations. In $[HoMu 12]$ they showed that the algorithm performed best for large weights on time window violations. Because of this our manual experiments focused on large values for it.In the LNS we used the following parameters: $maxSize$ = 5, $range$ = 1, $iterations$ = 5000, $probability$ = 0.25. We every instance 100 times. From the results in table 1 and figure 1 we can see that the LNS could always improve the solutions. The maximum improvement was for instance \_10\_2\_75\_8\_10\_1 where we had 10 customers and 2 vehicles. The improvement was 31.87\% in the average. For some instances the average initial solution was near the best solution we found. Probably the optimal solution is found for the 10 customer instances because all project groups found the same best solution in the leaderboard. Because of this the LNS could not improve the solution. In the more significant 20 customer instances we have improvements between 8.07\% and 27.20\%. This shows that the LNS performes quiet well. For even more significant results for our LNS we should have tested it for larger instances. As our sequential construction algorithm did not find initial solutions for larger instances we could not test our LNS there. 
 
 \begin{table}[H]
-\caption{Performance comparison of our LNS approach}
-\label{performance}
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
-Instance & Index & AVG initial solution & Best solution & AVG improvement \\ 
+Instance & Index & AVG initial solution & AVG best solution & AVG improvement \\ 
 \hline 
 gen\_10\_2\_75\_8\_10 & 1 & 1387 & 945 & 31,87\% \\ 
 \hline 
-& 2 & 1228 & 1226 & 0,16\% \\ 
+& 2 & 1229 & 1226 & 0,24\% \\ 
 \hline 
-& 3 & 1097 & 1097 & 0\% \\ 
+& 3 & 1231 & 1097 & 10,89\% \\ 
 \hline 
 & 4 & 1339 & 1268 & 5,30\% \\ 
 \hline 
-& 5 & 1137 & 1137 & 0\% \\ 
+& 5 & 1175 & 1137 & 3,23\% \\ 
 \hline 
 gen\_8\_2\_75\_8\_10 & 1 & 2524 & 2288 & 9,35\% \\ 
 \hline 
@@ -158,13 +156,15 @@ gen\_8\_2\_75\_8\_10 & 1 & 2524 & 2288 & 9,35\% \\
 & 5 & 2188 & 1919 & 12,29\% \\ 
 \hline 
 \end{tabular}
+\caption{Performance comparison of our LNS approach}
+\label{tab:performance}
 \end{table}
 
 \begin{figure}[htbp] 
-  \centering
-     \includegraphics[width=0.8\textwidth]{files/performance_lns.png}
-  \caption{Performance of our LNS approach}
-  \label{fig:Bild1}
+\centering
+\includegraphics[width=0.8\textwidth]{files/performance_lns.png}
+\caption{Performance of our LNS approach}
+\label{fig:performance}
 \end{figure}
 
 

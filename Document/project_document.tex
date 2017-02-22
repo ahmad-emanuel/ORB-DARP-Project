@@ -9,13 +9,14 @@
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 
-\title{Operations Research B}
+\title{Operations Research B\\A large neighborhood search approach to the dail-a-ride problem}
 \author{Lars Burghardt, Alexander Wördekemper, Ahmad Hashemi}
 \date{22.02.2017}
 
 \begin{document}
 \maketitle
 \tableofcontents
+\newpage
 \section{Initial solution}
 
 For our initial solution we decided to use a sequential construction algorithm with a hill climbing algorithm introduced in $[HoMu 12]$. We have chosen these algorithms because they seemed to produce good and fast initial solutions in the literature. We had to do some little adjustments because we could not open as many routes as we want because we have a fix number of vehicles. In line 1 of Algorithm~\ref{algo:sequential} we initialize an empty solution. Then we repeat the following until all customers have been inserted into a route or the number of routes is the number of vehicles we have: Initialize an empty route r (line 3). Then we have a for loop for all unassigned customers. In line 5 we get a random customer i. Then we insert the customer i at the end of the current route. In line 7 we call the hill climbing algorithm to improve the route r. If the new toot is feasible we mark customer i as inserted. If it is not feasible we remove i from the route again. After the for loop for all unassigned customers has finished we add the route r to the solution in line 12.
@@ -128,39 +129,39 @@ Example: \textit{orbdar.exe [optional: 60]  gen\_10\_2\_75\_8\_10\_1.darp}
 \newpage
 \section{Experimental investigation of our approaches components and performance}
 
-In experimental results we tested the performance of the LNS. We found out that the following parameter performed best. For the hill climber we used a wight of 0.01 for the route duration, 0.80 for the time window violations and 0.19 for the capacity violations. In $[HoMu 12]$ they showed that the algorithm performed best for large weights on time window violations. Because of this our manual experiments focused on large values for it.In the LNS we used the following parameters: $maxSize$ = 5, $range$ = 1, $iterations$ = 5000, $probability$ = 0.25. We every instance 100 times. From the results in table 1 and figure 1 we can see that the LNS could always improve the solutions. The maximum improvement was for instance \_10\_2\_75\_8\_10\_1 where we had 10 customers and 2 vehicles. The improvement was 31.87\% in the average. For some instances the average initial solution was near the best solution we found. Probably the optimal solution is found for the 10 customer instances because all project groups found the same best solution in the leaderboard. Because of this the LNS could not improve the solution. In the more significant 20 customer instances we have improvements between 8.07\% and 27.20\%. This shows that the LNS performes quiet well. For even more significant results for our LNS we should have tested it for larger instances. As our sequential construction algorithm did not find initial solutions for larger instances we could not test our LNS there. 
+In experimental results we tested the performance of the LNS. We found out that the following parameter performed best. For the hill climber we used a wight of 0.01 for the route duration, 0.80 for the time window violations and 0.19 for the capacity violations. In $[HoMu 12]$ they showed that the algorithm performed best for large weights on time window violations. Because of this our manual experiments focused on large values for it. In the LNS we used the following parameters: $maxSize$ = 5, $range = 1$, $iterations = 5000$, $probability = 0.25$. We tested every instance 100 times. From the results in Table~\ref{tab:performance} and Figure~\ref{fig:performance} we can see that the LNS could always improve the solutions. The maximum improvement was for instance gen\_10\_2\_75\_8\_10\_1 where we had 10 customers and 2 vehicles. The improvement was 31.87\% in average. For some instances the average initial solution was near the best solution we found. Probably the optimal solution is found for the 10 customer instances because all project groups found the same best solution in the leaderboard. Because of this the LNS could not improve the solution. In the more significant 20 customer instances we have improvements between 8.07\% and 27.20\%. This shows that the LNS performes quiet well. For even more significant results for our LNS we should have tested it for larger instances. As our sequential construction algorithm did not find initial solutions for larger instances we could not test our LNS there. 
 
 \begin{table}[H]
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
 Instance & Index & AVG initial solution & AVG best solution & AVG improvement \\ 
 \hline 
-gen\_10\_2\_75\_8\_10 & 1 & 1387 & 945 & 31,87\% \\ 
+gen\_10\_2\_75\_8\_10 & 1 & 1387 & 945 & 31.87\% \\ 
 \hline 
-& 2 & 1229 & 1226 & 0,24\% \\ 
+& 2 & 1229 & 1226 & 0.24\% \\ 
 \hline 
-& 3 & 1231 & 1097 & 10,89\% \\ 
+& 3 & 1231 & 1097 & 10.89\% \\ 
 \hline 
-& 4 & 1339 & 1268 & 5,30\% \\ 
+& 4 & 1339 & 1268 & 5.30\% \\ 
 \hline 
-& 5 & 1175 & 1137 & 3,23\% \\ 
+& 5 & 1175 & 1137 & 3.23\% \\ 
 \hline 
-gen\_8\_2\_75\_8\_10 & 1 & 2524 & 2288 & 9,35\% \\ 
+gen\_8\_2\_75\_8\_10 & 1 & 2524 & 2288 & 9.35\% \\ 
 \hline 
-& 2 & 2417 & 1963 & 18,78\% \\ 
+& 2 & 2417 & 1963 & 18.78\% \\ 
 \hline 
-& 3 & 2256 & 2074 & 8,07\% \\ 
+& 3 & 2256 & 2074 & 8.07\% \\ 
 \hline 
-& 4 & 2982 & 2172 & 27,20\% \\ 
+& 4 & 2982 & 2172 & 27.20\% \\ 
 \hline 
-& 5 & 2188 & 1919 & 12,29\% \\ 
+& 5 & 2188 & 1919 & 12.29\% \\ 
 \hline 
 \end{tabular}
 \caption{Performance comparison of our LNS approach}
 \label{tab:performance}
 \end{table}
 
-\begin{figure}[htbp] 
+\begin{figure}[H] 
 \centering
 \includegraphics[width=0.8\textwidth]{files/performance_lns.png}
 \caption{Performance of our LNS approach}

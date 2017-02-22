@@ -73,6 +73,7 @@ namespace ORB.DARP
                                 if (CurrentSolution.GetObjective() < Programm.solution.GetObjective())
                                 {
                                     Programm.solution = CurrentSolution;
+                                    Console.WriteLine("New objective: {0}", Programm.solution.GetObjective());
                                 }
                             }
                         }

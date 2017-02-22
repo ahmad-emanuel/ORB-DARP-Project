@@ -36,7 +36,7 @@ namespace ORB.DARP
                 }
             }
 
-            var totalRouteDuration = helpRoute[route.Length-1] + Instance.TransitTimes[route[route.Length-1], 0];
+            var totalRouteDuration = helpRoute[route.Length - 1] + Instance.TransitTimes[route[route.Length - 1], 0];
 
             if (totalRouteDuration > Instance.MaxTime)
             {
@@ -67,7 +67,7 @@ namespace ORB.DARP
                     customers--;
                 }
 
-                if (customers > capacity)
+                if(customers > capacity)
                 {
                     totalCapacitiesViolations++;
                 }

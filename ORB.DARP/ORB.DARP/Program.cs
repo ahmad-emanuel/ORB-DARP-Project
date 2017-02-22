@@ -64,7 +64,7 @@ public class Programm
         }
 
         lns = new LNS(instance, 0.01, 0.80, 0.19);
-        lns.MinimizeCosts(5, 1, 50000, 0.25);
+        lns.MinimizeCosts(instance.Customers/instance.Vehicles, 1, 50000, 0.25);
     }
 
     private static void Output(bool noTimeout, long cpuTime)

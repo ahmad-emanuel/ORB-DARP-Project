@@ -6,6 +6,7 @@
 *.log
 *.synctex.gz
 *.toc
+*.out
 
 # User-specific files
 *.suo

@@ -127,6 +127,9 @@ Example: \textit{orbdar.exe [optional: 60]  gen\_10\_2\_75\_8\_10\_1.darp}
 
 \newpage
 \section{Experimental investigation of our approaches components and performance}
+
+In experimental results we tested the performance of the LNS. We found out that the following parameter performed best. For the hill climber we used a wight of 0.01 for the route duration, 0.80 for the time window violations and 0.19 for the capacity violations. In $[HoMu 12]$ they showed that the algorithm performed best for large weights on time window violations. Because of this our manual experiments focused on large values for it.In the LNS we used the following parameters: $maxSize$ = 5, $range$ = 1, $iterations$ = 5000, $probability$ = 0.25. We every instance 100 times. From the results in table 1 and figure 1 we can see that the LNS could always improve the solutions. The maximum improvement was for instance \_10\_2\_75\_8\_10\_1 where we had 10 customers and 2 vehicles. The improvement was 31.87\% in the average. For some instances the average initial solution was near the best solution we found. Probably the optimal solution is found for the 10 customer instances because all project groups found the same best solution in the leaderboard. Because of this the LNS could not improve the solution. In the more significant 20 customer instances we have improvements between 8.07\% and 27.20\%. This shows that the LNS performes quiet well. For even more significant results for our LNS we should have tested it for larger instances. As our sequential construction algorithm did not find initial solutions for larger instances we could not test our LNS there. 
+
 \begin{table}[H]
 \caption{Performance comparison of our LNS approach}
 \label{performance}
@@ -163,6 +166,8 @@ gen\_8\_2\_75\_8\_10 & 1 & 2524 & 2288 & 9,35\% \\
   \caption{Performance of our LNS approach}
   \label{fig:Bild1}
 \end{figure}
+
+
 
 \newpage
 \section{Literature}
